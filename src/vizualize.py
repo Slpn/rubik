@@ -6,7 +6,6 @@ from vispy import app, scene, gloo, visuals
 import numpy as np
 
 from WorkerThreadClass import WorkerThread
-from types_1 import Direction
 
 
 CUBE_SIZE = 1
@@ -50,7 +49,7 @@ face_colors = [
 ]
 
 
-class MyApp(app.Canvas):
+class RubixVisualiser(app.Canvas):
 
     def __init__(self):
         app.Canvas.__init__(self, keys='interactive',
@@ -76,8 +75,28 @@ class MyApp(app.Canvas):
 
         self.all_cubes_nodes: list[scene.node.Node] = self.create_cube()
 
-        self.worker_thread = WorkerThread(self)
-        self.worker_thread.start()
+        self.visualizer_mouves = {
+            "U": self.U,
+            "U'": self.U_prime,
+
+            "D": self.D,
+            "D'": self.D_prime,
+
+            "F": self.F,
+            "F'": self.F_prime,
+
+            "B": self.B,
+            "B'": self.B_prime,
+
+            "L": self.L,
+            "L'": self.L_prime,
+
+            "R": self.R,
+            "R'": self.R_prime,
+        }
+
+        # self.worker_thread = WorkerThread(self)
+        # self.worker_thread.start()
 
     def close(self):
         app.quit()  # Arrêter la boucle d'événements
@@ -265,6 +284,5 @@ class MyApp(app.Canvas):
         return cubes
 
 
-if __name__ == '__main__':
-    my_app = MyApp()
+def launch_vizualiser():
     app.run()
