@@ -1,4 +1,5 @@
 import random
+import sys
 import threading
 import time
 from WorkerThreadClass import WorkerThread
@@ -9,32 +10,42 @@ from vispy import app
 import numpy as np
 
 
-def test_mouves(visualiser: RubixVisualiser):
-    test_mouves = ["F", "F'", "B", "B'", 'L']
+def test_mouves(visualiser: RubixVisualiser,  stop_event: threading.Event):
 
     cube = RubiksCube()
+    test_mouves = list(cube.mouves.keys())
+    print(test_mouves)
     cube.pretty_print()
     time.sleep(1)
-    seq = ["B'", 'F', "B'", 'B', 'L', "B'", "B'", 'F', "F'"]
+
     mouves_sequence = []
-    for i in range(0, 9):
+    for _ in range(0, 60):
+        if stop_event.is_set():
+            return
         mouve = random.choice(test_mouves)
-        print(seq[i])
-        # cube.mouves[mouve]()
-        cube.mouves[seq[i]]()
+        print(mouve)
+        cube.mouves[mouve]()
         cube.pretty_print()
         mouves_sequence.append(mouve)
-        # visualiser.visualizer_mouves[mouve]()
+        visualiser.visualizer_mouves[mouve]()
 
-    print(seq)
+    print(mouves_sequence)
 
 
 if __name__ == "__main__":
 
-    visualizer = RubixVisualiser()
-    thread = threading.Thread(target=test_mouves, args=[visualizer])
-    thread.start()
-  #  launch_vizualiser()
+    try:
 
-    # visualizer_thread = WorkerThread(visualizer)
-    # visualizer_thread.start()
+        visualizer = RubixVisualiser()
+        stop_event = threading.Event()
+        thread = threading.Thread(target=test_mouves, args=[
+                                  visualizer, stop_event])
+        thread.start()
+        launch_vizualiser()
+        thread.join()
+
+    except KeyboardInterrupt:
+        visualizer.close()
+        stop_event.set()
+        print("Canceled")
+        sys.exit()

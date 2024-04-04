@@ -9,7 +9,7 @@ from WorkerThreadClass import WorkerThread
 
 
 CUBE_SIZE = 1
-
+SPEED = 0.02
 
 colors_exemple = [
     ['RED', 'GREEN', 'BLUE'],
@@ -99,7 +99,8 @@ class RubixVisualiser(app.Canvas):
         # self.worker_thread.start()
 
     def close(self):
-        app.quit()  # Arrêter la boucle d'événements
+        app.quit()
+        raise KeyboardInterrupt('Visualiser have quit')
 
     def on_timer(self, event):
         self.update()
@@ -138,7 +139,7 @@ class RubixVisualiser(app.Canvas):
 
             test.rotate(rotate, axis)
             self.node_face.transform = test
-            time.sleep(0.05)
+            time.sleep(SPEED)
 
         for node in self.node_face.children:
             node.transform = test * node.transform
@@ -253,22 +254,17 @@ class RubixVisualiser(app.Canvas):
                 # [black, black, black, black, black, black, red, red, black, black, black, black]
                 # the position index of up face is 6 and 7
                 if (i == 1):
-                    face_colors[faceIndex['UP'][0]
-                        :faceIndex['UP'][1]] = colors['WHITE']
+                    face_colors[faceIndex['UP'][0]:faceIndex['UP'][1]] = colors['WHITE']
                 if (i == 3):
-                    face_colors[faceIndex['DOWN'][0]
-                        :faceIndex['DOWN'][1]] = colors['YELLOW']
+                    face_colors[faceIndex['DOWN'][0]:faceIndex['DOWN'][1]] = colors['YELLOW']
                 if (idx >= 6):
-                    face_colors[faceIndex['BOTTOM'][0]
-                        :faceIndex['BOTTOM'][1]] = colors['BLUE']
+                    face_colors[faceIndex['BOTTOM'][0]:faceIndex['BOTTOM'][1]] = colors['BLUE']
                 if (idx % 3 == 0):
-                    face_colors[faceIndex['RIGHT'][0]
-                        :faceIndex['RIGHT'][1]] = colors['RED']
+                    face_colors[faceIndex['RIGHT'][0]:faceIndex['RIGHT'][1]] = colors['RED']
                 if (idx < 3):
-                    face_colors[faceIndex['FRONT'][0]
-                        :faceIndex['FRONT'][1]] = colors['GREEN']
+                    face_colors[faceIndex['FRONT'][0]:faceIndex['FRONT'][1]] = colors['GREEN']
                 if ((idx - 2) % 3 == 0):
-                    face_colors[faceIndex['LEFT'][0]:faceIndex['LEFT'][1]] = colors["ORANGE"]
+                    face_colors[faceIndex['LEFT'][0]                                :faceIndex['LEFT'][1]] = colors["ORANGE"]
 
                 # Crete the node at the ggod position
                 transform = scene.STTransform(translate=pos)

@@ -1,5 +1,5 @@
 from rubix_types import Faces
-import copy
+from copy import copy
 import numpy as np
 from rubix_types import color_codes
 
@@ -42,31 +42,32 @@ class RubiksCube:
         top_edge, left_edge, down_edge, right_edge, front_edge, bottom_edge = None, None, None, None, None, None
         match face:
 
-            case 'Front':
-                top_edge = copy.copy(self.cube['Up'][2])
-                left_edge = copy.copy([self.cube['Left'][i][2]
-                                      for i in range(3)])
-                down_edge = copy.copy(self.cube['Down'][0])
-                right_edge = copy.copy([self.cube['Right'][i][0]
-                                        for i in range(3)])
+            case 'Front' | 'Bottom':
+                idx = 2 if face == 'Front' else 0
+                top_edge = copy(self.cube['Up'][idx])
+                left_edge = copy([self.cube['Left'][i][idx]
+                                  for i in range(3)])
+                down_edge = copy(self.cube['Down'][2 - idx])
+                right_edge = copy([self.cube['Right'][i][2 - idx]
+                                   for i in range(3)])
 
-            case 'Bottom':
-                top_edge = copy.copy(self.cube['Up'][0])
-                left_edge = copy.copy([self.cube['Left'][i][0]
-                                      for i in range(3)])
-                down_edge = copy.copy(self.cube['Down'][2])
-                right_edge = copy.copy([self.cube['Right'][i][2]
-                                        for i in range(3)])
+            case 'Left' | 'Right':
+                idx = 0 if face == 'Left' else 2
+                top_edge = copy([self.cube['Up'][i][idx]
+                                 for i in range(3)])
+                front_edge = copy([self.cube['Front'][i][idx]
+                                   for i in range(3)])
+                down_edge = copy([self.cube['Down'][i][idx]
+                                  for i in range(3)])
+                bottom_edge = copy([self.cube['Bottom'][i][2 - idx]
+                                    for i in range(3)])
 
-            case 'Left':
-                top_edge = copy.copy([self.cube['Up'][i][0]
-                                      for i in range(3)])
-                front_edge = copy.copy([self.cube['Front'][i][0]
-                                        for i in range(3)])
-                down_edge = copy.copy([self.cube['Down'][i][0]
-                                      for i in range(3)])
-                bottom_edge = copy.copy([self.cube['Bottom'][i][2]
-                                        for i in range(3)])
+            case 'Up' | 'Down':
+                idx = 0 if face == 'Up' else 2
+                left_edge = copy(self.cube["Left"][idx])
+                front_edge = copy(self.cube["Front"][idx])
+                right_edge = copy(self.cube["Right"][idx])
+                bottom_edge = copy(self.cube["Bottom"][idx])
 
         return top_edge, left_edge, down_edge, right_edge, front_edge, bottom_edge
 
@@ -79,12 +80,12 @@ class RubiksCube:
 
             case "Front":
 
-                self.cube['Down'][0] = temp_left[::-1]
-                self.cube['Up'][2] = temp_right[::-1]
+                self.cube['Down'][0] = temp_left
+                self.cube['Up'][2] = temp_right
 
                 for i in range(3):
-                    self.cube['Right'][i][0] = temp_down[2-i]
-                    self.cube['Left'][i][2] = temp_top[i]
+                    self.cube['Right'][i][0] = temp_down[2 - i]
+                    self.cube['Left'][i][2] = temp_top[2 - i]
 
             case "Bottom":
 
@@ -94,6 +95,32 @@ class RubiksCube:
                 for i in range(3):
                     self.cube['Right'][i][2] = temp_top[i]
                     self.cube['Left'][i][0] = temp_down[i]
+
+            case 'Left':
+                for i in range(3):
+                    self.cube['Down'][i][0] = temp_bottom[2 - i]
+                    self.cube['Up'][i][0] = temp_front[i]
+                    self.cube['Bottom'][i][2] = temp_top[2 - i]
+                    self.cube['Front'][i][0] = temp_down[i]
+
+            case 'Right':
+                for i in range(3):
+                    self.cube['Down'][i][2] = temp_front[i]
+                    self.cube['Up'][i][2] = temp_bottom[2 - i]
+                    self.cube['Bottom'][i][0] = temp_down[2 - i]
+                    self.cube['Front'][i][2] = temp_top[i]
+
+            case 'Up':
+                self.cube['Left'][0] = temp_bottom
+                self.cube['Right'][0] = temp_front
+                self.cube['Bottom'][0] = temp_right
+                self.cube['Front'][0] = temp_left
+
+            case 'Down':
+                self.cube['Left'][2] = temp_front
+                self.cube['Right'][2] = temp_bottom
+                self.cube['Bottom'][2] = temp_left
+                self.cube['Front'][2] = temp_right
 
     def rotate_face_clockwise(self, face):
         temp_top, temp_left, temp_down, temp_right, temp_front, temp_bottom = self.get_edges_cpy(
@@ -109,13 +136,13 @@ class RubiksCube:
                 self.cube['Down'][0] = temp_right[::-1]
 
                 for i in range(3):
-                    self.cube['Right'][i][0] = temp_down[i]
-                    self.cube['Left'][i][2] = temp_top[2]
+                    self.cube['Right'][i][0] = temp_top[i]
+                    self.cube['Left'][i][2] = temp_down[i]
 
             case "Bottom":
 
-                self.cube['Down'][2] = temp_left[::-1]
-                self.cube['Up'][0] = temp_right[::-1]
+                self.cube['Down'][2] = temp_left
+                self.cube['Up'][0] = temp_right
 
                 for i in range(3):
                     self.cube['Right'][i][2] = temp_down[2-i]
@@ -127,6 +154,25 @@ class RubiksCube:
                     self.cube['Up'][i][0] = temp_bottom[2 - i]
                     self.cube['Bottom'][i][2] = temp_down[2 - i]
                     self.cube['Front'][i][0] = temp_top[i]
+
+            case 'Right':
+                for i in range(3):
+                    self.cube['Down'][i][2] = temp_bottom[2 - i]
+                    self.cube['Up'][i][2] = temp_front[i]
+                    self.cube['Bottom'][i][0] = temp_top[2 - i]
+                    self.cube['Front'][i][2] = temp_down[i]
+
+            case 'Up':
+                self.cube['Left'][0] = temp_front
+                self.cube['Right'][0] = temp_bottom
+                self.cube['Bottom'][0] = temp_left
+                self.cube['Front'][0] = temp_right
+
+            case 'Down':
+                self.cube['Left'][2] = temp_bottom
+                self.cube['Right'][2] = temp_front
+                self.cube['Bottom'][2] = temp_right
+                self.cube['Front'][2] = temp_left
 
     def check_solved(self):
         for face in self.cube:
