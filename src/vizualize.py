@@ -4,12 +4,13 @@ import time
 from typing import Union
 from vispy import app, scene, gloo, visuals
 import numpy as np
+from vispy.color import ColorArray
 
 from WorkerThreadClass import WorkerThread
 
 
 CUBE_SIZE = 1
-SPEED = 0.02
+SPEED = 0.06
 
 colors_exemple = [
     ['RED', 'GREEN', 'BLUE'],
@@ -17,17 +18,19 @@ colors_exemple = [
     ['PURPLE', 'BEIGE', 'WHITE']
 ]
 colors = {
-    'RED': (1, 0, 0),
-    'GREEN': (0, 1, 0),
-    'BLUE': (0, 0, 1),
-    'YELLOW': (1, 1, 0.2),
-    'ORANGE': (1, 0, 1),
-    'BLACK': (0, 0, 0),
+    'RED': (1.0, 0.0, 0.0),
+    'GREEN': (0.0, 1, 0.0),
+    'BLUE': (0.0, 0.0, 1),
+    'YELLOW': (1, 1, 0.0),
+    'ORANGE': (1.0, 0.5, 0.0),
+    'BLACK': (0.0, 0.0, 0.0),
     'PURPLE': (0.5, 0, 0.5),
     'BEIGE': (0.5, 0.2, 0.5),
-    'WHITE':  (1, 1, 1)
+    'WHITE':  (1.0, 1.0, 1.0)
 
 }
+
+print(colors['ORANGE'])
 
 
 faceIndex = {
@@ -264,7 +267,10 @@ class RubixVisualiser(app.Canvas):
                 if (idx < 3):
                     face_colors[faceIndex['FRONT'][0]:faceIndex['FRONT'][1]] = colors['GREEN']
                 if ((idx - 2) % 3 == 0):
+                    print(colors["ORANGE"])
                     face_colors[faceIndex['LEFT'][0]                                :faceIndex['LEFT'][1]] = colors["ORANGE"]
+                    print(face_colors[faceIndex['LEFT']
+                          [0]:faceIndex['LEFT'][1]])
 
                 # Crete the node at the ggod position
                 transform = scene.STTransform(translate=pos)

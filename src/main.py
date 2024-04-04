@@ -19,7 +19,7 @@ def test_mouves(visualiser: RubixVisualiser,  stop_event: threading.Event):
     time.sleep(1)
 
     mouves_sequence = []
-    for _ in range(0, 60):
+    for _ in range(0, 10):
         if stop_event.is_set():
             return
         mouve = random.choice(test_mouves)
