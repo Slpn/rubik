@@ -11,23 +11,31 @@ class RubiksCube:
         self.mouves = {
             "U": lambda: self.rotate_face_clockwise("Up"),
             "U'": lambda: self.rotate_face_counterclockwise("Up"),
-
+            "U2": lambda: self.rotate_face_clockwise("Up") and self.rotate_face_clockwise("Up"),
+            
             "D": lambda: self.rotate_face_clockwise("Down"),
             "D'": lambda: self.rotate_face_counterclockwise("Down"),
+            "D2": lambda: self.rotate_face_clockwise("Down") and self.rotate_face_clockwise("Down"),
 
             "F": lambda: self.rotate_face_clockwise("Front"),
             "F'": lambda: self.rotate_face_counterclockwise("Front"),
+            "F2": lambda: self.rotate_face_clockwise("Front") and self.rotate_face_clockwise("Front"),
+
 
             "B": lambda: self.rotate_face_clockwise("Bottom"),
             "B'": lambda: self.rotate_face_counterclockwise("Bottom"),
+            "B2": lambda: self.rotate_face_clockwise("Bottom") and self.rotate_face_clockwise("Bottom"),
 
             "L": lambda: self.rotate_face_clockwise("Left"),
             "L'": lambda: self.rotate_face_counterclockwise("Left"),
+            "L2": lambda: self.rotate_face_clockwise("Left") and self.rotate_face_clockwise("Left"),
 
             "R": lambda: self.rotate_face_clockwise("Right"),
             "R'": lambda: self.rotate_face_counterclockwise("Right"),
-        }
+            "R2": lambda: self.rotate_face_clockwise("Right") and self.rotate_face_clockwise("Right"),
 
+        }
+        self.move_sequence = []
     def reset_cube(self):
         return {
             'Up': np.full((3, 3), 'W'),
@@ -207,15 +215,203 @@ class RubiksCube:
             print()
         print("\n")
 
-    # def solve_cross(self):
-    #     target_color = 'W'
-    #     for edge in find_edges(target_color):
-    #         position_edge_correctly(edge)
+    def find_edges(self, target_color):
+        edge_positions = {
+            Faces.UP: [(0, 1), (1, 0), (1, 2), (2, 1)],
+            Faces.DOWN: [(0, 1), (1, 0), (1, 2), (2, 1)],
+            Faces.FRONT: [(0, 1), (1, 0), (1, 2), (2, 1)],
+            Faces.BOTTOM: [(0, 1), (1, 0), (1, 2), (2, 1)],  
+            Faces.LEFT: [(0, 1), (1, 0), (1, 2), (2, 1)],
+            Faces.RIGHT: [(0, 1), (1, 0), (1, 2), (2, 1)],
+        }
+        edges = []
+        for face, positions in edge_positions.items():
+            for pos in positions:
+                if self.cube[face.value][pos[0]][pos[1]] == target_color:
+                    edges.append((face, pos))
+        print(f"Identified Edges with {target_color}: {edges}")
+        return edges
+
+    def move_edge_to_top(self, face, index):
+        print(f"Moving edge from {face.value} at {index} to top")
+        if face == 'Front' and index == (1, 0):
+            self.mouves["U"]()
+            self.mouves["L'"]()
+            self.mouves["F'"]()
+            self.mouves["L"]()
+            self.mouves["U'"]()
+        elif face == 'Front' and index == (0, 1):
+            self.mouves["U'"]()
+            self.mouves["F'"]()
+            self.mouves["L'"]()
+            self.mouves["F"]()
+            self.mouves["U"]()
+        elif face == 'Front' and index == (1, 2):
+            self.mouves["U"]()
+            self.mouves["R"]()
+            self.mouves["F"]()
+            self.mouves["R'"]()
+            self.mouves["U'"]()
+        elif face == 'Front' and index == (2, 1):
+            self.mouves["U'"]()
+            self.mouves["F"]()
+            self.mouves["R"]()
+            self.mouves["F'"]()
+            self.mouves["U"]()
+        elif face == 'Left' and index == (1, 0):
+            self.mouves["U"]()
+            self.mouves["B"]()
+            self.mouves["L"]()
+            self.mouves["B'"]()
+            self.mouves["U'"]()
+        elif face == 'Left' and index == (0, 1):
+            self.mouves["U'"]()
+            self.mouves["L"]()
+            self.mouves["B"]()
+            self.mouves["L'"]()
+            self.mouves["U"]()
+        elif face == 'Left' and index == (1, 2):
+            self.mouves["U"]()
+            self.mouves["F"]()
+            self.mouves["L"]()
+            self.mouves["F'"]()
+            self.mouves["U'"]()
+        elif face == 'Left' and index == (2, 1):
+            self.mouves["U'"]()
+            self.mouves["L'"]()
+            self.mouves["F"]()
+            self.mouves["L"]()
+            self.mouves["U"]()
+        elif face == 'Right' and index == (1, 0):
+            self.mouves["U"]()
+            self.mouves["F'"]()
+            self.mouves["R'"]()
+            self.mouves["F"]()
+            self.mouves["U'"]()
+        elif face == 'Right' and index == (0, 1):
+            self.mouves["U'"]()
+            self.mouves["R'"]()
+            self.mouves["F'"]()
+            self.mouves["R"]()
+            self.mouves["U"]()
+        elif face == 'Right' and index == (1, 2):
+            self.mouves["U"]()
+            self.mouves["B'"]()
+            self.mouves["R"]()
+            self.mouves["B"]()
+            self.mouves["U'"]()
+        elif face == 'Right' and index == (2, 1):
+            self.mouves["U'"]()
+            self.mouves["R"]()
+            self.mouves["B'"]()
+            self.mouves["R'"]()
+            self.mouves["U"]()
+        elif face == 'Up' and index == (0, 1):
+
+            self.mouves["U"]()
+        elif face == 'Up' and index == (1, 0):
+            self.mouves["U'"]()
+        elif face == 'Up' and index == (1, 2):
+            self.mouves["U"]()
+        elif face == 'Up' and index == (2, 1):
+            self.mouves["U"]()
+        elif face == 'Down' and index == (0, 1):
+            self.mouves["U'"]()
+        elif face == 'Down' and index == (1, 0):
+            self.mouves["U2"]()
+        elif face == 'Down' and index == (1, 2):
+            self.mouves["U"]()
+        elif face == 'Down' and index == (2, 1):
+            self.mouves["U"]()
+
+
+
+
+    def align_edge_above_destination(self, edge):
+        if edge == ('Up', (1, 0)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U"]()
+        elif edge == ('Up', (0, 1)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U'"]()
+        elif edge == ('Up', (1, 2)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U2"]()
+        elif edge == ('Up', (2, 1)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U"]()
+        elif edge == ('Front', (0, 1)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U'"]()
+        elif edge == ('Front', (1, 0)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U2"]()
+        elif edge == ('Front', (1, 2)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U"]()
+        elif edge == ('Front', (2, 1)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U"]()
+        elif edge == ('Left', (0, 1)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U2"]()
+        elif edge == ('Left', (1, 0)):
+            while not self.is_edge_above_destination(edge):
+                self.mouves["U"]()
+
+
+
+    def is_edge_above_destination(self, edge):
+        return edge == ('Up', (1, 0))
+
+    def insert_edge_into_cross(self, edge):
+        if edge == ('Up', (1, 0)):
+            self.mouves["F"]()
+        elif edge == ('Up', (0, 1)):
+            self.mouves["F"]()
+            self.mouves["F"]()
+        elif edge == ('Up', (1, 2)):
+            self.mouves["F'"]()
+        elif edge == ('Up', (2, 1)):
+            self.mouves["F"]()
+        elif edge == ('Front', (0, 1)):
+            self.mouves["F'"]()
+            self.mouves["U'"]()
+            self.mouves["F"]()
+
+        elif edge == ('Front', (1, 0)):
+            self.mouves["F"]()
+            self.mouves["U"]()
+            self.mouves["F'"]()
+        elif edge == ('Front', (1, 2)):
+            self.mouves["F'"]()
+            self.mouves["U"]()
+            self.mouves["F"]()
+        elif edge == ('Front', (2, 1)):
+            self.mouves["F"]()
+            self.mouves["U'"]()
+            self.mouves["F'"]()
+
+    def solve_cross(self):
+        target_color = 'W'
+        
+        for edge in self.find_edges(target_color):
+            current_face, current_index = edge
+            if current_face != 'Up':
+                self.move_edge_to_top(current_face, current_index)
+                print("Edge moved to top")
+            elif current_face == 'Up' and current_index != (1, 0):
+                self.align_edge_above_destination(edge)
+                print("Edge aligned above destination")
+            elif current_face == 'Up' and current_index == (1, 0):
+                self.insert_edge_into_cross(edge)
+                print("Edge inserted into cross")
 
     def solve_f2l(self):
-        pass
+        pass   
 
     def solve_oll(self):
+
         pass
 
     def solve_pll(self):

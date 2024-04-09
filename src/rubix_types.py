@@ -23,6 +23,4 @@ color_codes = {
     'RESET': "\033[0m"
 
 
-
-
 }

@@ -81,21 +81,27 @@ class RubixVisualiser(app.Canvas):
         self.visualizer_mouves = {
             "U": self.U,
             "U'": self.U_prime,
+            "U2": self.U2,
 
             "D": self.D,
             "D'": self.D_prime,
+            "D2": self.D2,
 
             "F": self.F,
             "F'": self.F_prime,
+            "F2": self.F2,
 
             "B": self.B,
             "B'": self.B_prime,
+            "B2": self.B2,
 
             "L": self.L,
             "L'": self.L_prime,
+            "L2": self.L2,
 
             "R": self.R,
             "R'": self.R_prime,
+            "R2": self.R2,
         }
 
         # self.worker_thread = WorkerThread(self)
@@ -197,6 +203,31 @@ class RubixVisualiser(app.Canvas):
     def R_prime(self):
         self.add_child('RIGHT')
         self.rotate((1, 0, 0), -90)
+    
+    def U2(self):
+        self.U()
+        self.U()
+
+    def D2(self):
+        self.D()
+        self.D()
+
+    def F2(self):
+        self.F()
+        self.F()
+
+    def B2(self):
+        self.B()
+        self.B()
+
+    def L2(self):
+        self.L()
+        self.L()
+
+    def R2(self):
+        self.R()
+        self.R()
+
 
     def create_cube(self) -> list[scene.node.Node]:
         """

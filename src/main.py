@@ -19,7 +19,7 @@ def test_mouves(visualiser: RubixVisualiser,  stop_event: threading.Event):
     time.sleep(1)
 
     mouves_sequence = []
-    for _ in range(0, 10):
+    for _ in range(0, 15):
         if stop_event.is_set():
             return
         mouve = random.choice(test_mouves)
@@ -28,9 +28,12 @@ def test_mouves(visualiser: RubixVisualiser,  stop_event: threading.Event):
         cube.pretty_print()
         mouves_sequence.append(mouve)
         visualiser.visualizer_mouves[mouve]()
+    
 
     print(mouves_sequence)
-
+    cube.pretty_print()
+    cube.solve_cross()
+    cube.pretty_print()
 
 if __name__ == "__main__":
 
