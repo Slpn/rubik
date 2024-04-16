@@ -21,6 +21,12 @@ class Edge(NamedTuple):
     color: str
 
 
+class Corner(NamedTuple):
+    corner: Edge
+    corner_i: Edge
+    corner_j: Edge
+
+
 dir_nodes = {
     'Bottom': {
         'Down': 'up',
@@ -153,6 +159,154 @@ class Face():
                 return ["Y", "W", "B", "G"]
             case _:
                 raise Exception('Bad face direction')
+
+    def get_first_corner(self, index: tuple, rubix) -> Edge:
+        res_i, res_j = None, None
+        i, j = index[0], index[1]
+        face = None
+        dir = self.dir
+        match dir:
+            case "Up":
+                face = rubix.cube["Bottom"] if i == 0 else rubix.cube["Front"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 2:
+                    res_i, res_j = 0, 2
+            case "Down":
+                face = rubix.cube["Front"] if i == 0 else rubix.cube["Bottom"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 2, 0
+                elif i == 0 and j == 2:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 0
+            case "Front":
+                face = rubix.cube["Up"] if i == 0 else rubix.cube["Down"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 2, 0
+                elif i == 0 and j == 2:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 0:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 2:
+                    res_i, res_j = 0, 2
+            case "Bottom":
+                face = rubix.cube["Up"] if i == 0 else rubix.cube["Down"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 0
+            case "Left":
+                face = rubix.cube["Up"] if i == 0 else rubix.cube["Down"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 0
+                elif i == 0 and j == 2:
+                    res_i, res_j = 2, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 0
+                elif i == 2 and j == 2:
+                    res_i, res_j = 0, 0
+            case "Right":
+                face = rubix.cube["Up"] if i == 0 else rubix.cube["Down"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 2
+                elif i == 2 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 2
+        if i == None or j == None:
+            raise Exception(
+                f"Face {dir} at index {(i, j)} is not a corner")
+
+        return {"face": face, "index": (res_i, res_j), "color": face.array[res_i][res_j]}
+
+    def get_second_corner(self, index: tuple, rubix) -> Edge:
+        res_i, res_j = None, None
+        i, j = index[0], index[1]
+        face = None
+        dir = self.dir
+        match dir:
+            case "Up":
+                face = rubix.cube["Left"] if j == 0 else rubix.cube["Right"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 0
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 2
+                elif i == 2 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 0, 0
+            case "Down":
+                face = rubix.cube["Left"] if j == 0 else rubix.cube["Right"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 2, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 0
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 2
+            case "Front":
+                face = rubix.cube["Left"] if j == 0 else rubix.cube["Right"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 0
+            case "Bottom":
+                face = rubix.cube["Left"] if j == 2 else rubix.cube["Right"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 0
+            case "Left":
+                face = rubix.cube["Bottom"] if j == 0 else rubix.cube["Front"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 0
+            case "Right":
+                face = rubix.cube["Front"] if j == 0 else rubix.cube["Bottom"]
+                if i == 0 and j == 0:
+                    res_i, res_j = 0, 2
+                elif i == 0 and j == 2:
+                    res_i, res_j = 0, 0
+                elif i == 2 and j == 0:
+                    res_i, res_j = 2, 2
+                elif i == 2 and j == 2:
+                    res_i, res_j = 2, 0
+        if i == None or j == None:
+            raise Exception(
+                f"Face {dir} at index {(i, j)} is not a corner")
+
+        return {"face": face, "index": (res_i, res_j), "color": face.array[res_i][res_j]}
+
+    def get_corners(self, index: tuple, rubix) -> Corner:
+        first_corner = self.get_first_corner(index, rubix)
+        second_corner = self.get_second_corner(index, rubix)
 
 
 def check_edge_color(face: Face, idx: tuple, rubix) -> bool:
