@@ -2,7 +2,7 @@
 from utils import color_codes
 from copy import copy
 import numpy as np
-from faceClass import Face, Faces_Dir
+from face_class import Face, Faces_Dir
 
 
 class RubiksCube:

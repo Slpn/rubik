@@ -1,6 +1,6 @@
 import time
 from rubik_class import Opposite_mouves, RubiksCube
-from faceClass import Edge, Face, check_edge_color, dir_nodes
+from face_class import Edge, Face, check_edge_color, dir_nodes
 import numpy as np
 from utils import CircularChainedList, get_face_to_mouve, mouves_dir, get_new_idx
 from vizualize import RubixVisualiser
@@ -215,12 +215,6 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
             idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
 
     print('Cross OK', len(cross_mouves))
-
-    visualiser.SPEED = 0.1
-    print(cross_mouves)
-    for mouve in cross_mouves:
-        visualiser.visualizer_mouves[mouve]()
-        time.sleep(visualiser.SPEED)
 
     rubik.soluce_mouves.append(cross_mouves)
     return cross_mouves

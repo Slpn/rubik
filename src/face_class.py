@@ -230,7 +230,7 @@ class Face():
             raise Exception(
                 f"Face {dir} at index {(i, j)} is not a corner")
 
-        return {"face": face, "index": (res_i, res_j), "color": face.array[res_i][res_j]}
+        return {"face": face, "index": (res_i, res_j), "color": face[(res_i, res_j)]}
 
     def get_second_corner(self, index: tuple, rubix) -> Edge:
         res_i, res_j = None, None
@@ -302,11 +302,20 @@ class Face():
             raise Exception(
                 f"Face {dir} at index {(i, j)} is not a corner")
 
-        return {"face": face, "index": (res_i, res_j), "color": face.array[res_i][res_j]}
+        return {"face": face, "index": (res_i, res_j), "color": face[(res_i, res_j)]}
 
     def get_corners(self, index: tuple, rubix) -> Corner:
         first_corner = self.get_first_corner(index, rubix)
         second_corner = self.get_second_corner(index, rubix)
+        return {
+            "corner": {
+                "face": self,
+                "index": index,
+                "color": self[index]
+            },
+            "corner_i": first_corner,
+            "corner_j": second_corner
+        }
 
 
 def check_edge_color(face: Face, idx: tuple, rubix) -> bool:

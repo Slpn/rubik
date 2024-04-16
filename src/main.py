@@ -2,9 +2,19 @@ import random
 import sys
 import threading
 import time
+from F2L import F2L
 from resolve_cross import resolve_cross
 from rubik_class import RubiksCube
 from vizualize import RubixVisualiser, launch_vizualiser
+
+
+def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser):
+    time.sleep(1)
+    visualiser.SPEED = 0.02
+    print(mouves)
+    for mouve in mouves:
+        visualiser.visualizer_mouves[mouve]()
+        time.sleep(visualiser.SPEED)
 
 
 def mix_rubiks(mouves: str, rubik: RubiksCube, visualiser: RubixVisualiser):
@@ -31,7 +41,7 @@ def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser):
         mouves_sequence.append(mouve)
         visualiser.visualizer_mouves[mouve]()
 
-    print(mouves_sequence)
+    print(' '.join(mouves_sequence))
 
 
 def test_mouves(visualiser: RubixVisualiser, rubik: RubiksCube,  stop_event: threading.Event):
@@ -63,23 +73,23 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-        mix_rubiks(sys.argv[1], rubik, visualiser)
+       # mix_rubiks(sys.argv[1], rubik, visualiser)
         random_scramble(rubik, visualiser)
         rubik.pretty_print()
 
-        stop_event = threading.Event()
-        thread_test = threading.Thread(target=test_mouves, args=[
-            visualiser, rubik, stop_event])
-
-        thread_resolve_cross = threading.Thread(target=resolve_cross, args=[
-            rubik, visualiser])
+        cross_mouves = resolve_cross(rubik, visualiser)
       #  thread_test.start()
      #   thread_test.join()
-        thread_resolve_cross.start()
 
-        # thread_test.start()
+        thread_visualiser = threading.Thread(
+            target=mouve_visualiser, args=[cross_mouves, visualiser])
+        F2L_thread = threading.Thread(target=F2L, args=[rubik, visualiser])
+
+        thread_visualiser.start()
+        F2L_thread.start()
 
         launch_vizualiser()
+
       #  resolve_cross(rubik, visualiser)
 
         # thread.join()
@@ -90,6 +100,5 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         visualiser.close()
-        stop_event.set()
         print("Canceled")
         sys.exit()
