@@ -2,7 +2,7 @@ import random
 import sys
 import threading
 import time
-from CFOP2 import resolve_cross
+from resolve_cross import resolve_cross
 from rubik_class import RubiksCube
 from vizualize import RubixVisualiser, launch_vizualiser
 
@@ -26,7 +26,6 @@ def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser):
     mouves_sequence = []
     for _ in range(0, 20):
         mouve = random.choice(test_mouves)
-        print(mouve)
         rubik.mouves[mouve]()
         # rubik.pretty_print()
         mouves_sequence.append(mouve)
@@ -64,7 +63,7 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-        # mix_rubiks(sys.argv[1], rubik, visualizer)
+        mix_rubiks(sys.argv[1], rubik, visualiser)
         random_scramble(rubik, visualiser)
         rubik.pretty_print()
 

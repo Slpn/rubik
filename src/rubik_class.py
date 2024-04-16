@@ -67,8 +67,6 @@ class RubiksCube:
 
             case "Front":
 
-                print('temps left', temp_left)
-                print('temps right', temp_right)
                 self.cube['Down'].array[0] = temp_left
                 self.cube['Up'].array[2] = temp_right
 

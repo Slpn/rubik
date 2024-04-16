@@ -18,6 +18,7 @@ Face = ForwardRef('Face')
 class Edge(NamedTuple):
     face: Face
     index: tuple
+    color: str
 
 
 dir_nodes = {
@@ -84,6 +85,9 @@ class Face():
                 self.array = np.full((3, 3), 'R')
                 self.color = 'R'
 
+    def __getitem__(self, key: tuple):
+        return self.array[key[0]][key[1]]
+
     def get_edge(self, index: tuple, rubix) -> Edge:
         res_i, res_j = None, None
         i, j = index[0], index[1]
@@ -137,7 +141,7 @@ class Face():
                     raise Exception(
                         f"Face {dir} at index {(i, j)} is not an edge")
 
-        return {"face": face, "index": (res_i, res_j)}
+        return {"face": face, "index": (res_i, res_j), "color": face.array[res_i][res_j]}
 
     def get_4_edges_color(self, dir: Faces_Dir):
         match dir:
@@ -153,6 +157,6 @@ class Face():
 
 def check_edge_color(face: Face, idx: tuple, rubix) -> bool:
     edge = face.get_edge(idx, rubix)
-    if (edge['face'].color != edge["face"].array[edge['index'][0]][edge['index'][1]]):
+    if (edge['face'].color != edge["color"]):
         return False
     return True

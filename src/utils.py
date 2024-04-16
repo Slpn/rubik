@@ -17,34 +17,34 @@ color_codes = {
 
 mouves_dir = {
     "Right": {
+        "opposite": 'R2',
         "+": "R",
         "-": "R'",
-        "opposite": 'R2'
     },
     "Left": {
+        "opposite": 'L2',
         "+": "L",
         "-": "L'",
-        "opposite": 'L2'
     },
     "Front": {
+        "opposite": 'F2',
         "+": "F",
         "-": "F'",
-        "opposite": 'F2'
     },
     "Bottom": {
+        "opposite": 'B2',
         "+": "B",
         "-": "B'",
-        "opposite": 'B2'
     },
     "Up": {
+        "opposite": 'U2',
         "+": "U",
         "-": "U'",
-        "opposite": 'U2'
     },
     "Down": {
+        "opposite": 'D2',
         "+": "D",
         "-": "D'",
-        "opposite": 'D2'
     },
 
 
@@ -118,3 +118,70 @@ def get_face_to_mouve(from_face: str, index: tuple):
 #             'Left': get_9_cubes('O', first_edge='W', seconde_edge='G', third_edge='Y', fourth_edge='B'),
 #             'Right': get_9_cubes('R', first_edge='W', seconde_edge='B', third_edge='Y', fourth_edge='G'),
 #         }
+
+
+class Node:
+    def __init__(self, value):
+        self.value: any = value
+        self.next: Node = None
+
+    def __getitem_index__(self, key: int):
+        iter_node = self
+        if (key >= 0):
+            for _ in range(key):
+                iter_node = iter_node.next
+            return iter_node
+        else:
+            for _ in range(4):
+                if iter_node.__getitem_index__(-key) == self:
+                    return iter_node
+                iter_node = iter_node.next
+
+    def __getitem__(self, key: str):
+        if (type(key) == int):
+            return self.__getitem_index__(key)
+        iter_node = self
+        while iter_node.next != self:
+            if iter_node.value == key:
+                break
+            iter_node = iter_node.next
+        return iter_node
+
+
+class CircularChainedList:
+    def __init__(self):
+        self.head_node: Node = None
+
+    def __init__(self, elem_lst: list):
+        self.head_node: Node = None
+        for elem in elem_lst:
+            self.add_elem(elem)
+
+    def add_elem(self, value):
+        new_node = Node(value)
+        if self.head_node is None:
+            self.head_node = new_node
+            new_node.next = self.head_node
+        else:
+            iter_node = self.head_node
+            while iter_node.next != self.head_node:
+                iter_node = iter_node.next
+            new_node.next = self.head_node
+            iter_node.next = new_node
+
+
+def get_new_idx(idx: tuple, sense: str):
+    i, j = None, None
+    match sense:
+        case '+':
+            i = idx[1]
+            j = 2 - idx[0]
+
+        case '-':
+            i = 2 - idx[1]
+            j = idx[0]
+
+        case 'opposite':
+            i = 2 - idx[0]
+            j = 2 - idx[1]
+    return (i, j)
