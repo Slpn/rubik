@@ -2,7 +2,7 @@ import random
 import sys
 import threading
 import time
-from F2L import F2L
+from F2L.F2L import F2L
 from resolve_cross import resolve_cross
 from rubik_class import RubiksCube
 from vizualize import RubixVisualiser, launch_vizualiser
@@ -10,7 +10,7 @@ from vizualize import RubixVisualiser, launch_vizualiser
 
 def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser):
     time.sleep(1)
-    visualiser.SPEED = 0.02
+    visualiser.SPEED = 0.01
     print(mouves)
     for mouve in mouves:
         visualiser.visualizer_mouves[mouve]()
@@ -37,7 +37,6 @@ def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser):
     for _ in range(0, 20):
         mouve = random.choice(test_mouves)
         rubik.mouves[mouve]()
-        # rubik.pretty_print()
         mouves_sequence.append(mouve)
         visualiser.visualizer_mouves[mouve]()
 
@@ -73,9 +72,9 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-       # mix_rubiks(sys.argv[1], rubik, visualiser)
-        random_scramble(rubik, visualiser)
-        rubik.pretty_print()
+        mix_rubiks(sys.argv[1], rubik, visualiser)
+        # random_scramble(rubik, visualiser)
+        # rubik.pretty_print()
 
         cross_mouves = resolve_cross(rubik, visualiser)
       #  thread_test.start()
@@ -86,6 +85,7 @@ if __name__ == "__main__":
         F2L_thread = threading.Thread(target=F2L, args=[rubik, visualiser])
 
         thread_visualiser.start()
+        time.sleep(5)
         F2L_thread.start()
 
         launch_vizualiser()

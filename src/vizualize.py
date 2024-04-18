@@ -64,9 +64,11 @@ class RubixVisualiser(app.Canvas):
         self.view_widget.bgcolor = (1, 1, 1, 1)
 
         self.cam = scene.cameras.TurntableCamera(parent=self.view_widget.scene,
-                                                 up='y', azimuth=-45, elevation=30, distance=10, center=(0, 0, 0))
+                                                 up='y', azimuth=-45, elevation=30, distance=10, center=(0, 0, 0), roll=360)
 
+        self.cam.flip = (False, True, False)
         self.view_widget.camera = self.cam
+
         self.cam.set_range()
 
         self.node_cube = scene.node.Node(parent=self.view_widget.scene, name='rubix',
@@ -323,22 +325,18 @@ class RubixVisualiser(app.Canvas):
                 # [black, black, black, black, black, black, red, red, black, black, black, black]
                 # the position index of up face is 6 and 7
                 if (i == 1):
-                    face_colors[faceIndex['UP'][0]
-                        :faceIndex['UP'][1]] = colors['WHITE']
+                    face_colors[faceIndex['UP'][0]                                :faceIndex['UP'][1]] = colors['WHITE']
                 if (i == 3):
-                    face_colors[faceIndex['DOWN'][0]
-                        :faceIndex['DOWN'][1]] = colors['YELLOW']
+                    face_colors[faceIndex['DOWN'][0]                                :faceIndex['DOWN'][1]] = colors['YELLOW']
                 if (idx >= 6):
-                    face_colors[faceIndex['BOTTOM'][0]
-                        :faceIndex['BOTTOM'][1]] = colors['BLUE']
+                    face_colors[faceIndex['BOTTOM'][0]                                :faceIndex['BOTTOM'][1]] = colors['BLUE']
                 if (idx % 3 == 0):
-                    face_colors[faceIndex['RIGHT'][0]
-                        :faceIndex['RIGHT'][1]] = colors['RED']
+                    face_colors[faceIndex['RIGHT'][0]                                :faceIndex['RIGHT'][1]] = colors['RED']
                 if (idx < 3):
-                    face_colors[faceIndex['FRONT'][0]
-                        :faceIndex['FRONT'][1]] = colors['GREEN']
+                    face_colors[faceIndex['FRONT'][0]                                :faceIndex['FRONT'][1]] = colors['GREEN']
                 if ((idx - 2) % 3 == 0):
-                    face_colors[faceIndex['LEFT'][0]:faceIndex['LEFT'][1]] = colors["ORANGE"]
+                    face_colors[faceIndex['LEFT'][0]
+                        :faceIndex['LEFT'][1]] = colors["ORANGE"]
 
                 # Crete the node at the ggod position
                 transform = scene.STTransform(translate=pos)
