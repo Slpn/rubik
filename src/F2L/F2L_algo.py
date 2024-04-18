@@ -23,6 +23,26 @@ def four(cube: Corner):
             "U", mouves_dir[R]["-"]]
 
 
+def five(cube: Corner):
+    print("5")
+    R = cube['corner_j']["face"].dir
+    # 5
+    # mouve = (U' R U R') U2 (R U' R')
+    return ["U'", mouves_dir[R]["+"], "U", mouves_dir[R]["-"],
+            "U2",  mouves_dir[R]["+"], "U'",  mouves_dir[R]["-"]]
+
+
+def eight(cube: Corner):
+    print("8")
+    R = cube['corner']["face"].dir
+    # 8
+    # mouve = y' U (R' U2 R) U2' (R' U R)
+    return [y_prime_mouve_dir["U"], y_prime_mouve_dir[mouves_dir[R]["-"]],
+            y_prime_mouve_dir["U2"], y_prime_mouve_dir[mouves_dir[R]["+"]],
+            y_prime_mouve_dir["U2"], y_prime_mouve_dir[mouves_dir[R]["-"]],
+            y_prime_mouve_dir["U"], y_prime_mouve_dir[mouves_dir[R]["+"]]]
+
+
 def nine(cube: Corner):
     print("9")
     R = cube['corner_j']["face"].dir
@@ -61,7 +81,7 @@ def seventeen(cube: Corner):
 
 def eighteen(cube: Corner):
     print("18")
-    R = cube["corner_i"]["face"].dir
+    R = cube["corner_j"]["face"].dir
     # 18
     # mouves = 	y' (R' U2 R) U (R' U' R)
     return [y_prime_mouve_dir[mouves_dir[R]["-"]],  y_prime_mouve_dir["U2"],
@@ -69,7 +89,7 @@ def eighteen(cube: Corner):
                               ["+"]], y_prime_mouve_dir["U"],
             y_prime_mouve_dir[mouves_dir[R]
                               ["-"]], y_prime_mouve_dir["U'"],
-            y_prime_mouve_dir[mouves_dir[R]["-"]]]
+            y_prime_mouve_dir[mouves_dir[R]["+"]]]
 
 
 def twenty_four(cube: Corner):
@@ -89,9 +109,9 @@ def twenty_six(face_dir: str, adjacent_face_dir: str):
     print("26", face_dir)
     # 26
     # mouves = U (R U' R') (F R' F' R)
-    mouves = ["U", mouves_dir[R]["+"], "U'",  mouves_dir[R]["-"],
-              mouves_dir[F]["+"],  mouves_dir[R]["-"],
-              mouves_dir[F]["-"],  mouves_dir[R]["+"]]
+    return ["U", mouves_dir[R]["+"], "U'",  mouves_dir[R]["-"],
+            mouves_dir[F]["+"],  mouves_dir[R]["-"],
+            mouves_dir[F]["-"],  mouves_dir[R]["+"]]
 
 
 def twenty_seven(adjacent_face_dir: str):
@@ -99,8 +119,8 @@ def twenty_seven(adjacent_face_dir: str):
     print("27")
     # 27
     # mouves =(R U' R' U)(R U' R')
-    mouves = [mouves_dir[R]["+"], "U'", mouves_dir[R]["-"],
-              "U", mouves_dir[R]["+"], "U'", mouves_dir[R]["-"]]
+    return [mouves_dir[R]["+"], "U'", mouves_dir[R]["-"],
+            "U", mouves_dir[R]["+"], "U'", mouves_dir[R]["-"]]
 
 
 def thirty_one(cube: Corner):

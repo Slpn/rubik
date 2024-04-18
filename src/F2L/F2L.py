@@ -55,6 +55,16 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         mouves = algo.thirteen(cube)
                                         break
 
+                            if (is_opposite_right_well_placed(cube, rubik)):
+                                print("is_opposite_right_well_placed_bis")
+                                if (cube["corner"]["index"][1] == 2):
+                                    mouves = algo.five(cube)
+                                    break
+
+                                if (cube["corner"]["index"][1] == 0):
+                                    mouves = algo.eight(cube)
+                                    break
+
                             if (is_opposite_right_well_placed_bis(cube, rubik)):
                                 print("is_opposite_right_well_placed_bis")
                                 if (cube["corner"]["index"][1] == 2):
@@ -62,7 +72,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                     break
 
                                 if (cube["corner"]["index"][1] == 0):
-                                    algo.four(cube)
+                                    mouves = algo.four(cube)
                                     break
 
                             # if (is_opposite_left_well_placed_bis(cube, rubik)):
@@ -113,8 +123,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
         if (turn >= 4):
             turn_not_found = 0
             while (found := nothing_found_1(white_corner_bad_placed, rubik, visualiser)) == False\
-                    and turn_not_found < 4:
-                print("nothing_found_1", found)
+                    and turn_not_found < 3:
                 turn_not_found += 1
                 all_corner = {face.dir: [face.get_corners(
                     index, rubik) for index in corner_index] for face in faces}
@@ -125,8 +134,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                              for face in faces}
                 turn_not_found = 0
                 while (found := nothing_found_2(top_edges, rubik, visualiser)) == False\
-                        and turn_not_found < 4:
-                    print("nothing_found_2", found)
+                        and turn_not_found < 3:
                     top_edges = {face.dir: [face.get_edge((2, 1), rubik)]
                                  for face in faces}
                     turn_not_found += 1
@@ -141,6 +149,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
 
 
 def nothing_found_1(corners: dict[str, list[Corner]], rubik: RubiksCube, visualiser: RubixVisualiser):
+    print("nothing_found_1")
     mouves = []
     for face_dir in corners:
         for cube in corners[face_dir]:
@@ -170,12 +179,14 @@ def nothing_found_2(top_edges: dict[str, list[Edge]], rubik: RubiksCube, visuali
     print("nothing_found_2")
     mouves = []
     for face_dir in top_edges:
+        print(face_dir)
         for edge in top_edges[face_dir]:
             if adjacent_face := is_edge_well_placed(face_dir, edge, rubik):
-                if (edge["index"] == (0, 1)):
+                print("ho", edge["index"])
+                if (edge["index"] == (2, 1)):
                     mouves = algo.twenty_six(face_dir, adjacent_face.dir)
                     break
-                if (edge["index"] == (1, 0)):
+                if (edge["index"] == (1, 2)):
                     mouves = algo.twenty_seven(adjacent_face.dir)
                     break
 
