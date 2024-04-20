@@ -24,10 +24,10 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
     #     print()
     turn = 0
 
-    while (len(white_corner_bad_placed)):
+    while len(list(filter(lambda elem: len(white_corner_bad_placed[elem]) > 0, white_corner_bad_placed))):
         mouves = []
 
-        print("en haut")
+        print("en haut", white_corner_bad_placed)
 
         for corner in white_corner_bad_placed:
             print("ddd", corner, "\n")
@@ -162,6 +162,20 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
             turn = 0
 
         print()
+
+    print("CORNERS OK")
+
+    edges = [1 for face in faces if face.dir != "Up" and face.dir != "Down" if not is_final_pos_edge(
+        face, rubik.cube[face.dir].get_edge((1, 0), rubik))]
+
+    while len(edges):
+        top_edges = {face.dir: [face.get_edge((2, 1), rubik)]
+                     for face in faces if face.dir != "Down"}
+        nothing_found_2(top_edges, rubik, visualiser)
+        edges = [1 for face in faces if face.dir != "Up" and face.dir != "Down" if not is_final_pos_edge(
+            face, rubik.cube[face.dir].get_edge((1, 0), rubik))]
+
+    print("EENND")
 
 
 def nothing_found_1(corners: dict[str, list[Corner]], rubik: RubiksCube, visualiser: RubixVisualiser):

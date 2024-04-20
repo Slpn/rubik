@@ -4,7 +4,7 @@ f2l ok avec mixes:
 13 17 9 31
 
 
-F2 B2 R' B' D D' D B F B2 B2 U B L' U F2 F B2 B B'
+"F2 B2 R' B' D D' D B F B2 B2 U B L' U F2 F B2 B B'"
 4 4 18 8 26
 
 

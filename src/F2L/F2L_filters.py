@@ -1,7 +1,7 @@
 
 
 import time
-from face_class import Corner, Edge
+from face_class import Corner, Edge, Face
 from rubik_class import RubiksCube
 
 
@@ -9,6 +9,13 @@ def is_final_pos(cube: Corner):
     if (cube["corner"]["color"] == cube["corner"]["face"].color)\
             and (cube["corner_i"]["color"] == cube["corner_i"]["face"].color)\
             and (cube["corner_j"]["color"] == cube["corner_j"]["face"].color):
+        return True
+    return False
+
+
+def is_final_pos_edge(face: Face, edge: Edge):
+    if face[(1, 2)] == face.color\
+            and edge["color"] == edge["face"].color:
         return True
     return False
 
@@ -179,7 +186,7 @@ def is_opposite_right_well_placed(cube: Corner, rubik) -> bool:
         case (2, 0):
             adjacent_idx = (0, 1)
         case (2, 2):
-            adjacent_idx = (1, 2)
+            adjacent_idx = (1, 0)
 
     adjacent_edge = cube["corner_i"]["face"].get_edge(
         adjacent_idx, rubik)
