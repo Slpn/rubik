@@ -66,16 +66,15 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         break
                                 if (adjacent["case"] == 2):
                                     print("is_adjacent_well_placed_2")
-                                    # if (cube["corner"]["index"][1] == 0):
-                                    #     mouves = algo.twelve(cube)
-                                    #     break
+                                    if (cube["corner"]["index"][1] == 0):
+                                        mouves = algo.twelve(cube)
+                                        break
                                     if (cube["corner"]["index"][1] == 2):
                                         mouves = algo.eleven(cube)
                                         break
 
                             if (opopsite_case := is_opposite_right_well_placed(cube, rubik)):
                                 if opopsite_case == 1:
-                                    print("is_opposite_right_well_placed_bis")
                                     if (cube["corner"]["index"][1] == 2):
                                         mouves = algo.five(cube)
                                         break
@@ -85,7 +84,6 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         break
 
                                 if opopsite_case == 2:
-                                    print("is_opposite_right_well_placed_bis")
                                     if (cube["corner"]["index"][1] == 2):
                                         mouves = algo.nine(cube)
                                         break
