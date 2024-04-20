@@ -5,6 +5,23 @@ from utils import CircularChainedList, get_face_to_mouve, mouves_dir, get_new_id
 from vizualize import RubixVisualiser
 
 
+def one(cube: Corner):
+    print("1")
+    R = cube['corner_j']["face"].dir
+    # 1
+    # mouves = U (R U' R')
+    return ["U", mouves_dir[R]["+"], "U'", mouves_dir[R]["-"]]
+
+
+def two(cube: Corner):
+    print("2")
+    R = cube['corner']["face"].dir
+    # 2
+    # mouves = y' U' (R' U R)
+    return [y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["-"]],
+            y_prime_mouve_dir["U"], y_prime_mouve_dir[mouves_dir[R]["+"]]]
+
+
 def three(cube: Corner):
     print("3")
     R = cube['corner']["face"].dir
@@ -53,12 +70,24 @@ def nine(cube: Corner):
             y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["+"]]]
 
 
-def fourteen(cube: Corner):
-    print("14")
-    # 14
-    # mouve = U' (R U' R' U) (R U R')
-    return ["U'", mouves_dir[cube["corner"]]["+"], "U'", mouves_dir[cube["corner"]]["-"],
-            "U", mouves_dir[cube["corner"]]["+"], "U", mouves_dir[cube["corner"]]["-"]]
+def eleven(cube: Corner):
+    print("11")
+    R = cube['corner_j']["face"].dir
+    # 11
+    # mouve =U' (R U2' R' U) y' (R' U' R)
+    return ["U'", mouves_dir[R]['+'], "U2",
+            mouves_dir[R]['-'], "U",
+            y_prime_mouve_dir[mouves_dir[R]['-']], y_prime_mouve_dir["U'"],
+            y_prime_mouve_dir[mouves_dir[R]['+']]]
+
+
+def twelve(cube: Corner):
+    print("12")
+    R = cube['corner']["face"].dir
+    # 12
+    # mouve = R' U2' R2 U R2' U R
+    return [mouves_dir[R]['-'], "U2", mouves_dir[R]['opposite'],
+            "U", mouves_dir[R]['opposite'], "U", mouves_dir[R]['+']]
 
 
 def thirteen(cube: Corner):
@@ -68,6 +97,14 @@ def thirteen(cube: Corner):
     # mouve = y' U (R' U R U') (R' U' R)
     return [y_prime_mouve_dir["U"], y_prime_mouve_dir[mouves_dir[R]["-"]], y_prime_mouve_dir["U"], y_prime_mouve_dir[mouves_dir[R]["+"]],
             y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["-"]], y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["+"]]]
+
+
+def fourteen(cube: Corner):
+    print("14")
+    # 14
+    # mouve = U' (R U' R' U) (R U R')
+    return ["U'", mouves_dir[cube["corner"]]["+"], "U'", mouves_dir[cube["corner"]]["-"],
+            "U", mouves_dir[cube["corner"]]["+"], "U", mouves_dir[cube["corner"]]["-"]]
 
 
 def seventeen(cube: Corner):

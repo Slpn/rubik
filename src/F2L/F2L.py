@@ -43,10 +43,10 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
 
                         if (is_i_corner_equals_color(cube)):
                             print("is_cube_well_placed_i_equal_corner")
-                            time.sleep(0)
-                            if (adjacent := is_adjacent_j_well_placed(cube, rubik)):
+                            if (adjacent := is_adjacent_well_placed(cube, rubik)):
                                 print("adjacent ok")
-                                if (is_adjacent_well_placed_1(cube, adjacent['edge'], adjacent['idx'])):
+                                print("case", adjacent["case"])
+                                if (adjacent["case"] == 1):
                                     print("is_adjacent_well_placed_1")
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.fourteen(cube)
@@ -55,31 +55,44 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         mouves = algo.thirteen(cube)
                                         break
 
-                            if (is_opposite_right_well_placed(cube, rubik)):
-                                print("is_opposite_right_well_placed_bis")
-                                if (cube["corner"]["index"][1] == 2):
-                                    mouves = algo.five(cube)
-                                    break
+                            if (adjacent := is_adjacent_j_well_placed(cube, rubik)):
+                                if (adjacent["case"] == 1):
+                                    print("is_adjacent_well_placed_2")
+                                    if (cube["corner"]["index"][1] == 0):
+                                        mouves = algo.two(cube)
+                                        break
+                                    if (cube["corner"]["index"][1] == 2):
+                                        mouves = algo.one(cube)
+                                        break
+                                if (adjacent["case"] == 2):
+                                    print("is_adjacent_well_placed_2")
+                                    # if (cube["corner"]["index"][1] == 0):
+                                    #     mouves = algo.twelve(cube)
+                                    #     break
+                                    if (cube["corner"]["index"][1] == 2):
+                                        mouves = algo.eleven(cube)
+                                        break
 
-                                if (cube["corner"]["index"][1] == 0):
-                                    mouves = algo.eight(cube)
-                                    break
+                            if (opopsite_case := is_opposite_right_well_placed(cube, rubik)):
+                                if opopsite_case == 1:
+                                    print("is_opposite_right_well_placed_bis")
+                                    if (cube["corner"]["index"][1] == 2):
+                                        mouves = algo.five(cube)
+                                        break
 
-                            if (is_opposite_right_well_placed_bis(cube, rubik)):
-                                print("is_opposite_right_well_placed_bis")
-                                if (cube["corner"]["index"][1] == 2):
-                                    mouves = algo.nine(cube)
-                                    break
+                                    if (cube["corner"]["index"][1] == 0):
+                                        mouves = algo.eight(cube)
+                                        break
 
-                                if (cube["corner"]["index"][1] == 0):
-                                    mouves = algo.four(cube)
-                                    break
+                                if opopsite_case == 2:
+                                    print("is_opposite_right_well_placed_bis")
+                                    if (cube["corner"]["index"][1] == 2):
+                                        mouves = algo.nine(cube)
+                                        break
 
-                            # if (is_opposite_left_well_placed_bis(cube, rubik)):
-                            #     # mouve = (R U R')
-                            #     mouves = ["L", "D", "L'"]
-                            #     print("is_opposite_left_well_placed_bis")
-                            #     break
+                                    if (cube["corner"]["index"][1] == 0):
+                                        mouves = algo.four(cube)
+                                        break
 
                     if (is_cube_up_face(cube)):
                         print("is_on up face")
@@ -89,15 +102,15 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                             time.sleep(0)
                             if (adjacent := is_adjacent_bottom_well_placed(cube, rubik)):
                                 print("adjacent bottom ok")
-                                if (is_adjacent_bottom_well_placed_1(cube, adjacent['edge'], adjacent['idx'])):
+                                if (adjacent["case"] == 1):
                                     mouves = algo.thirty_one(cube)
                                     break
-                            if (adjacent := is_adjacent_j_well_placed(cube, rubik)):
-                                print("is_adjacent_j_well_placed")
-                                if is_adjacent_well_placed_2(cube, adjacent['edge'], adjacent['idx']):
+                            if (adjacent := is_adjacent_well_placed(cube, rubik)):
+                                print("is_adjacent_well_placed")
+                                if adjacent["case"] == 2:
                                     mouves = algo.twenty_four
                                     break
-                                if is_adjacent_well_placed_1(cube, adjacent['edge'], adjacent['idx']):
+                                if adjacent["case"] == 1:
                                     if (adjacent["idx"] == (2, 1)):
                                         mouves = algo.seventeen(cube)
                                         break
@@ -130,13 +143,18 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                 white_corner_bad_placed = {face: [corner for corner in all_corner[face]
                                                   if corner['corner']['color'] == 'W' and not is_final_pos(corner)]for face in all_corner}
             if (not found):
+                print("replace edge")
+                found = replace_edge(
+                    white_corner_bad_placed, rubik, visualiser)
+                print("found", found)
+            if (not found):
                 top_edges = {face.dir: [face.get_edge((2, 1), rubik)]
-                             for face in faces}
+                             for face in faces if face.dir != "Down"}
                 turn_not_found = 0
                 while (found := nothing_found_2(top_edges, rubik, visualiser)) == False\
                         and turn_not_found < 3:
                     top_edges = {face.dir: [face.get_edge((2, 1), rubik)]
-                                 for face in faces}
+                                 for face in faces if face.dir != "Down"}
                     turn_not_found += 1
 
             all_corner = {face.dir: [face.get_corners(
@@ -181,19 +199,48 @@ def nothing_found_2(top_edges: dict[str, list[Edge]], rubik: RubiksCube, visuali
     for face_dir in top_edges:
         print(face_dir)
         for edge in top_edges[face_dir]:
-            if adjacent_face := is_edge_well_placed(face_dir, edge, rubik):
+            if adjacent_face := is_left_edge_well_placed(face_dir, edge, rubik):
                 print("ho", edge["index"])
-                if (edge["index"] == (2, 1)):
-                    mouves = algo.twenty_six(face_dir, adjacent_face.dir)
-                    break
-                if (edge["index"] == (1, 2)):
-                    mouves = algo.twenty_seven(adjacent_face.dir)
-                    break
+                mouves = algo.twenty_six(face_dir, adjacent_face.dir)
+                break
+            if adjacent_face := is_right_edge_well_placed(face_dir, edge, rubik):
+                mouves = algo.twenty_seven(adjacent_face.dir)
+                break
+        if len(mouves):
+            break
 
     if (len(mouves) == 0):
         mouve_F2L(["U"], rubik, visualiser)
         return False
     mouve_F2L(mouves, rubik, visualiser)
+    return True
+
+
+def replace_edge(white_corner_bad_placed, rubik: RubiksCube, visualiser: RubixVisualiser):
+    to_place = {face: [corner for corner in white_corner_bad_placed[face]
+                       if not is_cube_on_bottom(corner)] for face in white_corner_bad_placed if face != "Down"}
+    edges = {face: rubik.cube[face].get_edge(
+        (1, 0), rubik) for face in to_place}
+    to_mouve = None
+    for face in to_place:
+        for corner in to_place[face]:
+            for face_edge in edges:
+                print(face_edge, edges[face_edge])
+                if (rubik.cube[edges[face_edge]["face"].dir][(1, 0)] == corner["corner_i"]["color"]
+                        and edges[face_edge]["color"] == corner["corner_j"]["color"]):
+                    to_mouve = face_edge
+                    break
+                if (rubik.cube[edges[face_edge]["face"].dir][(1, 1)] == corner["corner_j"]["color"]
+                        and edges[face_edge]["color"] == corner["corner_i"]["color"]):
+                    to_mouve = face_edge
+                    break
+
+    if (to_mouve == None):
+        return False
+
+    mouve_F2L([mouves_dir[to_mouve]["+"], "U'",
+              mouves_dir[to_mouve]["-"]], rubik, visualiser)
+    print('returned true')
     return True
 
 
