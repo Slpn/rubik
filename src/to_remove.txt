@@ -10,3 +10,23 @@ f2l ok avec mixes:
 
 "D' D R D2 D' B R' F' F' D F2 U2 D2 R' D2 L L U' U U"
 1 replace 2 12 13
+
+B2 B D R2 B2 F2 U2 U2 R2 D2 B2 L' F' B' F B F2 B U U
+
+B2 U2 R L R2 L F D' U D' L' R2 B' F L D' D F' B' F2
+
+
+cross 17: F2 U2 F2 D' L' F L R' L L2 B2 B' B R' B2 F2 U F B2 
+
+
+
+
+
+case ??: U R2 D2 U R2 F' U R2 F' F' R B F F R' B B2 R2 B2 L
+
+
+
+
+//memo
+
+27 pas implementé mais pas appeler
