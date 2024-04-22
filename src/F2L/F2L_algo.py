@@ -202,6 +202,15 @@ def twenty_seven(adjacent_face_dir: str):
             "U", mouves_dir[R]["+"], "U'", mouves_dir[R]["-"]]
 
 
+def thirty(cube: Corner):
+    print("30")
+    R = cube["corner"]["face"].dir
+    # 30
+    # mouves = 	(R U R' U')(R U R')
+    return [mouves_dir[R]['+'], "U", mouves_dir[R]['-'], "U'",
+            mouves_dir[R]['+'], "U", mouves_dir[R]['-']]
+
+
 def thirty_one(cube: Corner):
     print("31")
     R = cube["corner_j"]["face"].dir

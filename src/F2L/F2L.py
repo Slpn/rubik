@@ -156,6 +156,17 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                     mouves = algo.twenty_two(cube)
                                     break
 
+                    if is_cube_on_bottom(cube):
+                        print("cube on bottom")
+
+                        if right_edge := right_edge_well_placed(cube, rubik):
+                            print(right_edge)
+                            if right_edge == 1:
+                                mouves = algo.twenty_seven(cube)
+                                break
+                            elif right_edge == 2:
+                                mouves = algo.thirty(cube)
+
             if (len(mouves)):
                 break
 

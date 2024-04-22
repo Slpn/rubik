@@ -243,3 +243,22 @@ def is_right_edge_well_placed(face_dir: str, edge: Edge, rubik: RubiksCube):
         return adjacent_face
 
     return None
+
+
+def right_edge_well_placed(cube: Corner, rubik: RubiksCube):
+
+    face: Face | None = None
+    if (cube["corner"]["index"][1] == 0):
+        face = cube["corner"]["face"]
+    elif (cube["corner"]["index"][1] == 2):
+        face = cube["corner_j"]["face"]
+
+    print('in right_edge_well_placed')
+    print(face.dir)
+    print(cube['corner_i']['color'])
+
+    edge = face.get_edge((2, 1), rubik)
+    if (face[2, 1] == cube['corner_j']["color"]) and \
+            edge['color'] == cube['corner_i']["color"]:
+        return 1 if cube["corner"]["index"][1] == 2 \
+            else 2
