@@ -48,6 +48,26 @@ def five(cube: Corner):
     return ["U'", mouves_dir[R]["+"], "U", mouves_dir[R]["-"],
             "U2",  mouves_dir[R]["+"], "U'",  mouves_dir[R]["-"]]
 
+def six(cube: Corner):
+    print("6")
+    R = cube['corner_j']["face"].dir
+    # 6
+    # mouve = y' U' (R' U R) U2 (R' U' R)
+    return [y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["-"]],
+            y_prime_mouve_dir["U"], y_prime_mouve_dir[mouves_dir[R]["+"]],
+            "U2", y_prime_mouve_dir[mouves_dir[R]["-"]],
+            y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["+"]]]
+
+def seven(cube: Corner):
+    print("7")
+    R = cube['corner_j']["face"].dir
+    # 7
+    # mouve = U' (R U2' R') U2 (R U' R')
+    return ["U'", mouves_dir[R]["+"], "U2", mouves_dir[R]["-"],
+            "U2", mouves_dir[R]["+"], "U'", mouves_dir[R]["-"]]
+
+
+
 
 def eight(cube: Corner):
     print("8")
@@ -68,6 +88,15 @@ def nine(cube: Corner):
     return ["U'", mouves_dir[R]["+"], "U'", mouves_dir[R]["-"],
             "U", y_prime_mouve_dir[mouves_dir[R]["-"]],
             y_prime_mouve_dir["U'"], y_prime_mouve_dir[mouves_dir[R]["+"]]]
+
+
+def ten(cube: Corner):
+    print("10")
+    R = cube['corner']["face"].dir
+    # 10
+    # mouve = U' (R U R' U)(R U R')
+    return ["U'", mouves_dir[R]["+"], "U", mouves_dir[R]["-"],
+            "U", mouves_dir[R]["+"], "U", mouves_dir[R]["-"]]
 
 
 def eleven(cube: Corner):

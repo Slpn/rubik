@@ -92,6 +92,25 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         mouves = algo.four(cube)
                                         break
 
+                            if (opopsite_case := is_opposite_left_well_placed(cube, rubik)):
+                                if opopsite_case == 1:
+                                    if (cube["corner"]["index"][1] == 2):
+                                        mouves = algo.three(cube)
+                                        break
+                                    if (cube["corner"]["index"][1] == 0):
+                                        mouves = algo.ten(cube)
+                                        break
+    
+                                if opopsite_case == 2:
+                                    if (cube["corner"]["index"][1] == 2):
+                                        mouves = algo.seven(cube)
+                                        break
+
+                                    if (cube["corner"]["index"][1] == 0):
+                                        mouves = algo.six(cube)
+                                        break
+
+
                     if (is_cube_up_face(cube)):
                         print("is_on up face")
 

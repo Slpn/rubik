@@ -165,15 +165,6 @@ def is_adjacent_bottom_well_placed(cube: Corner, rubik):
     return None
 
 
-def is_opposite_left_well_placed(cube: Corner, rubik) -> bool:
-    adjacent_corner_i = (2 - cube["corner_i"]["index"][0], 1)
-    adjacent_edge = cube["corner_i"]["face"].get_edge(
-        adjacent_corner_i, rubik)
-    if (cube["corner_i"]["color"] == cube["corner_i"]["face"][adjacent_corner_i]
-            and adjacent_edge["color"] == cube["corner_j"]["face"].color):
-        return True
-    return False
-
 
 def is_opposite_right_well_placed(cube: Corner, rubik) -> bool:
     adjacent_idx = None
@@ -202,15 +193,33 @@ def is_opposite_right_well_placed(cube: Corner, rubik) -> bool:
     return None
 
 
-def is_opposite_left_well_placed_bis(cube: Corner, rubik) -> bool:
-    adjacent_corner_i = (1, 2 - cube["corner_j"]["index"][0])
-    adjacent_edge = cube["corner_i"]["face"].get_edge(
-        adjacent_corner_i, rubik)
-    if (cube["corner_j"]["color"] == cube["corner_i"]["face"][adjacent_corner_i]
-            and adjacent_edge["color"] == cube["corner_i"]["face"].color):
-        return True
-    return False
+def is_opposite_left_well_placed(cube: Corner, rubik) -> bool:
+    adjacent_idx = None
+    corner_i_idx = cube["corner_i"]["index"]
+    match corner_i_idx:
+        case (0, 2):
+            adjacent_idx = (1, 0)
+        case (0, 0):
+            adjacent_idx = (2, 1)
+        case (2, 0):
+            adjacent_idx = (1, 2)
+        case (2, 2):
+            adjacent_idx = (0, 1)
 
+    adjacent_edge = cube["corner_i"]["face"].get_edge(
+        adjacent_idx, rubik)
+    print("in opposise left bis", cube["corner_i"]["index"], adjacent_idx, "\n",
+          cube["corner_j"]["color"], cube["corner_i"]["face"][adjacent_idx], "\n",
+          adjacent_edge["color"], cube["corner_i"]["color"])
+    
+    if (cube["corner_j"]["color"] == adjacent_edge["color"]
+            and cube["corner_i"]["face"][adjacent_idx] == cube["corner_i"]["color"]):
+        return 1
+    
+    if (cube["corner_j"]["color"] == cube["corner_i"]["face"][adjacent_idx]
+            and adjacent_edge["color"] == cube["corner_i"]["color"]):
+        return 2
+    return None
 
 def is_left_edge_well_placed(face_dir: str, edge: Edge, rubik: RubiksCube):
     adjacent_face = rubik.cube[face_dir].get_corners((2, 2), rubik)[
