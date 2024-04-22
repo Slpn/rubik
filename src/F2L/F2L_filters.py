@@ -287,3 +287,5 @@ def right_edge_well_placed(cube: Corner, rubik: RubiksCube):
             edge['color'] == cube['corner_i']["color"]:
         return 1 if cube["corner"]["index"][1] == 2 \
             else 2
+
+

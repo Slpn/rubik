@@ -296,3 +296,49 @@ def thirty_six(cube: Corner):
     return ["U", mouves_dir[F]["-"], "U'",
             mouves_dir[F]["+"], "U'", mouves_dir[R]["+"],
             "U", mouves_dir[R]["-"]]
+
+def thirty_eight(cube: Corner):
+    print("38")
+    R = cube["corner_j"]["face"].dir
+    # 38
+    # mouves = (R U' R') d (R' U2 R) U2' (R' U R)
+    return [mouves_dir[R]["+"], "U'", mouves_dir[R]["-"], "d",
+            mouves_dir[R]["-"], "U2", mouves_dir[R]["+"],
+            "U2", mouves_dir[R]["-"], "U", mouves_dir[R]["+"]]
+
+def thirty_nine(cube: Corner):
+    print("39")
+    R = cube["corner"]["face"].dir
+    # 39
+    # mouves = (R U' R') d (R' U' R)(U' R' U' R)
+    return [mouves_dir[R]["+"], "U'", mouves_dir[R]["-"], "d",
+            mouves_dir[R]["-"], "U'", mouves_dir[R]["+"],
+            "U'", mouves_dir[R]["-"], "U'", mouves_dir[R]["+"]]
+
+
+def forty(cube: Corner):
+    print("40")
+    R = cube["corner"]["face"].dir
+    # 40
+    # mouves = (R U R') U2 (R U' R' U)(R U R')
+    return [mouves_dir[R]["+"], "U", mouves_dir[R]["-"], "U2",
+            mouves_dir[R]["+"], "U'", mouves_dir[R]["-"], "U",
+            mouves_dir[R]["+"], "U", mouves_dir[R]["-"]]
+
+def forty_one(cube: Corner):
+    print("41")
+    R = cube["corner_j"]["face"].dir
+    # 41
+    # mouves = (R U' R') d (R' U' R U')(R' U' R)
+    return [mouves_dir[R]["+"], "U'", mouves_dir[R]["-"], "d",
+            mouves_dir[R]["-"], "U'", mouves_dir[R]["+"],
+            "U'", mouves_dir[R]["-"], "U'", mouves_dir[R]["+"]]
+
+def forty_two(cube: Corner):
+    print("42")
+    R = cube["corner_i"]["face"].dir
+    # 42
+    # mouves = (R U' R' U) d (R' U' R U') (R' U R)
+    return [mouves_dir[R]["+"], "U'", mouves_dir[R]["-"], "U", "d",
+            mouves_dir[R]["-"], "U'", mouves_dir[R]["+"],
+            "U'", mouves_dir[R]["-"], "U'", mouves_dir[R]["+"]]

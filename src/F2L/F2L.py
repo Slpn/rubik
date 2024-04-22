@@ -185,6 +185,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                 break
                             elif right_edge == 2:
                                 mouves = algo.thirty(cube)
+                        
 
             if (len(mouves)):
                 break
