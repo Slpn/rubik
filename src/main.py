@@ -73,7 +73,7 @@ if __name__ == "__main__":
         rubik = RubiksCube()
 
         mix_rubiks(sys.argv[1], rubik, visualiser)
-        random_scramble(rubik, visualiser)
+        # random_scramble(rubik, visualiser)
         # rubik.pretty_print()
 
         cross_mouves = resolve_cross(rubik, visualiser)

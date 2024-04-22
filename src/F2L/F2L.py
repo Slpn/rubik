@@ -9,7 +9,7 @@ from vizualize import RubixVisualiser
 
 
 def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
-    visualiser.SPEED = 0.08
+    visualiser.SPEED = 0.04
     corner_index = [(0, 0), (0, 2), (2, 0), (2, 2)]
     faces = [rubik.cube[face] for face in rubik.cube]
     all_corner = {face.dir: [face.get_corners(
@@ -125,7 +125,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.ten(cube)
                                         break
-    
+
                                 if opopsite_case == 2:
                                     if (cube["corner"]["index"][1] == 2):
                                         mouves = algo.seven(cube)
@@ -134,7 +134,6 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.six(cube)
                                         break
-
 
                     if (is_cube_up_face(cube)):
                         print("is_on up face")
@@ -167,13 +166,28 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                     break
 
                             if opposite := is_opposite_right_well_placed(cube, rubik, on_top=True):
+                                print('is_opposite_right_well_placed')
                                 print(opposite)
                                 print(cube["corner"]["face"].dir)
                                 print(cube["corner_i"]["color"])
                                 print(cube["corner_j"]["color"])
-                                if opposite == 1:
+                                if opposite == 2:
                                     mouves = algo.twenty_two(cube)
                                     break
+                                elif opposite == 1:
+                                    mouves = algo.nineteen(cube)
+
+                            if opposite := is_opposite_left_well_placed(cube, rubik, on_top=True):
+                                print('is_opposite_left_well_placed')
+                                print(opposite)
+                                print(cube["corner"]["face"].dir)
+                                print(cube["corner_i"]["color"])
+                                print(cube["corner_j"]["color"])
+                                if opposite == 2:
+                                    mouves = algo.twenty(cube)
+                                    break
+                                elif opposite == 1:
+                                    mouves = algo.twenty_one(cube)
 
                     if is_cube_on_bottom(cube):
                         print("cube on bottom")
