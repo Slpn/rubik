@@ -289,3 +289,60 @@ def right_edge_well_placed(cube: Corner, rubik: RubiksCube):
             else 2
 
 
+def can_use_algo_38(corner: Corner, rubik: RubiksCube) -> bool:
+    if is_cube_on_bottom(corner):
+        if is_cube_well_placed(corner):
+            if is_i_corner_equals_color(corner):
+                if is_adjacent_left_well_placed(corner, rubik):
+                    return True
+    return False
+
+def can_use_algo_39(corner: Corner, rubik: RubiksCube) -> bool:
+    if is_cube_on_bottom(corner):
+        if is_cube_well_placed(corner):
+            if is_i_corner_equals_color(corner):
+                if is_adjacent_well_placed(corner, rubik):
+                    return True
+    return False
+
+def can_use_algo_40(corner: Corner, rubik: RubiksCube) -> bool:
+    if is_cube_on_bottom(corner):
+        if is_cube_well_placed(corner):
+            if is_i_corner_equals_color(corner):
+                if is_opposite_left_well_placed(corner, rubik):
+                    return True
+    return False
+
+def can_use_algo_41(corner: Corner, rubik: RubiksCube) -> bool:
+    if is_cube_on_bottom(corner):
+        if is_cube_well_placed(corner):
+            if is_i_corner_equals_color(corner):
+                if is_opposite_right_well_placed(corner, rubik):
+                    return True
+    return False
+
+def can_use_algo_42(corner: Corner, rubik: RubiksCube) -> bool:
+    if is_cube_on_bottom(corner):
+        if is_cube_well_placed(corner):
+            if is_i_corner_equals_color(corner):
+                if is_adjacent_bottom_well_placed(corner, rubik):
+                    return True
+    return False
+
+# Define similar helper functions for algorithms 39 to 42...
+
+# Function to select the appropriate algorithm
+def select_f2l_algorithm(corner: Corner, rubik: RubiksCube):
+    print("in select_f2l_algorithm")
+    if can_use_algo_38(corner, rubik):
+        return 38
+    if can_use_algo_39(corner, rubik):
+        return 39
+    if can_use_algo_40(corner, rubik):
+        return 40
+    if can_use_algo_41(corner, rubik):
+        return 41
+    if can_use_algo_42(corner, rubik):
+        return 42
+                
+    return None

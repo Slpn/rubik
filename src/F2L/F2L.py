@@ -9,7 +9,7 @@ from vizualize import RubixVisualiser
 
 
 def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
-    visualiser.SPEED = 0.08
+    visualiser.SPEED = 0.02
     corner_index = [(0, 0), (0, 2), (2, 0), (2, 2)]
     faces = [rubik.cube[face] for face in rubik.cube]
     all_corner = {face.dir: [face.get_corners(
@@ -32,20 +32,20 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
         for corner in white_corner_bad_placed:
             print("ddd", corner, "\n")
             for cube in white_corner_bad_placed[corner]:
-
+                print("WHITE CORNER", cube)
                 if is_cube_well_placed(cube):
 
-                    print('well placed')
-                    print("ccc", corner, "\n")
-                    print(corner, cube)
+                    # print('well placed')
+                    # print("ccc", corner, "\n")
+                    # print(corner, cube)
                     if (is_cube_on_top(cube)):
-                        print("is_on top")
+                        # print("is_on top")
 
                         if (is_i_corner_equals_color(cube)):
-                            print("is_cube_well_placed_i_equal_corner")
+                            # print("is_cube_well_placed_i_equal_corner")
                             if (adjacent := is_adjacent_well_placed(cube, rubik)):
-                                print("adjacent ok")
-                                print("case", adjacent["case"])
+                                # print("adjacent ok")
+                                # print("case", adjacent["case"])
                                 if (adjacent["case"] == 1):
                                     print("is_adjacent_well_placed_1")
                                     if (cube["corner"]["index"][1] == 0):
@@ -55,7 +55,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         mouves = algo.thirteen(cube)
                                         break
                                 if (adjacent["case"] == 2):
-                                    print("is_adjacent_well_placed_2")
+                                    # print("is_adjacent_well_placed_2")
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.sixteen(cube)
                                         break
@@ -65,7 +65,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
 
                             if (adjacent := is_adjacent_j_well_placed(cube, rubik)):
                                 if (adjacent["case"] == 1):
-                                    print("is_adjacent_well_placed_2")
+                                    # print("is_adjacent_well_placed_2")
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.two(cube)
                                         break
@@ -73,7 +73,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                         mouves = algo.one(cube)
                                         break
                                 if (adjacent["case"] == 2):
-                                    print("is_adjacent_well_placed_2")
+                                    # print("is_adjacent_well_placed_2")
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.twelve(cube)
                                         break
@@ -120,7 +120,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                             if (opopsite_case := is_opposite_left_well_placed(cube, rubik)):
                                 if opopsite_case == 1:
                                     if (cube["corner"]["index"][1] == 2):
-                                        mouves = algo.three(cube)
+                                        mouves = algo.seven(cube)
                                         break
                                     if (cube["corner"]["index"][1] == 0):
                                         mouves = algo.ten(cube)
@@ -128,7 +128,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
     
                                 if opopsite_case == 2:
                                     if (cube["corner"]["index"][1] == 2):
-                                        mouves = algo.seven(cube)
+                                        mouves = algo.three(cube)
                                         break
 
                                     if (cube["corner"]["index"][1] == 0):
@@ -137,10 +137,10 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
 
 
                     if (is_cube_up_face(cube)):
-                        print("is_on up face")
+                        # print("is_on up face")
 
                         if (is_i_corner_equals_j_color(cube)):
-                            print("is_i_corner_equals_j_color")
+                            # print("is_i_corner_equals_j_color")
                             time.sleep(0)
                             if (adjacent := is_adjacent_bottom_well_placed(cube, rubik)):
                                 print("adjacent bottom ok")
@@ -167,10 +167,10 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                     break
 
                             if opposite := is_opposite_right_well_placed(cube, rubik, on_top=True):
-                                print(opposite)
-                                print(cube["corner"]["face"].dir)
-                                print(cube["corner_i"]["color"])
-                                print(cube["corner_j"]["color"])
+                                # print(opposite)
+                                # print(cube["corner"]["face"].dir)
+                                # print(cube["corner_i"]["color"])
+                                # print(cube["corner_j"]["color"])
                                 if opposite == 1:
                                     mouves = algo.twenty_two(cube)
                                     break
@@ -185,6 +185,7 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
                                 break
                             elif right_edge == 2:
                                 mouves = algo.thirty(cube)
+                                break
                         
 
             if (len(mouves)):
@@ -250,6 +251,19 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser):
     while len(edges):
         top_edges = {face.dir: [face.get_edge((2, 1), rubik)]
                      for face in faces if face.dir != "Down"}
+        if last_algo := select_f2l_algorithm(cube, rubik):
+            match last_algo:
+                case 38:
+                    mouves = algo.thirty_eight(cube)
+                case 39:
+                    mouves = algo.thirty_nine(cube)
+                case 40:
+                    mouves = algo.fourty(cube)
+                case 41:
+                    mouves = algo.fourty_one(cube)
+                case 42:
+                    mouves = algo.fourty_two(cube)
+            break
         place_edges(top_edges, rubik, visualiser)
         edges = [1 for face in faces if face.dir != "Up" and face.dir != "Down" if not is_final_pos_edge(
             face, rubik.cube[face.dir].get_edge((1, 0), rubik))]
