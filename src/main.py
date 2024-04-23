@@ -72,7 +72,7 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-        mix_rubiks(sys.argv[1], rubik, visualiser)
+        # mix_rubiks(sys.argv[1], rubik, visualiser)
         random_scramble(rubik, visualiser)
         # rubik.pretty_print()
 

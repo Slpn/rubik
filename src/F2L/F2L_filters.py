@@ -186,60 +186,86 @@ def is_adjacent_bottom_well_placed(cube: Corner, rubik):
 
 
 def is_opposite_right_well_placed(cube: Corner, rubik, on_top=False) -> bool:
-    adjacent_idx = None
+    opposite_idx, up_corner, up_idx, corner1, corner2 = None, None, None, None, None
+
     if not on_top:
-        up_face = cube["corner_i"]["face"]
-        corner_i_idx = cube["corner_i"]["index"]
+        up_corner = cube["corner_i"]
+        up_idx = cube["corner_i"]["index"]
+        corner1 = cube["corner_i"]
+        corner2 = cube["corner_j"]
+
     else:
-        up_face = cube["corner"]["face"]
-        corner_i_idx = cube["corner"]["index"]
-    match corner_i_idx:
+        up_corner = cube["corner"]
+        up_idx = cube["corner"]["index"]
+        match up_corner["index"]:
+            case (0, 2) | (2, 0):
+                corner1 = cube["corner_i"]
+                corner2 = cube["corner_j"]
+            case (0, 0) | (2, 2):
+                corner1 = cube["corner_j"]
+                corner2 = cube["corner_i"]
+
+    print("corner_i", corner2, up_corner, cube["corner_i"]["color"])
+    match up_idx:
         case (0, 2):
-            adjacent_idx = (2, 1)
+            opposite_idx = (2, 1)
         case (0, 0):
-            adjacent_idx = (1, 2)
+            opposite_idx = (1, 2)
         case (2, 0):
-            adjacent_idx = (0, 1)
+            opposite_idx = (0, 1)
         case (2, 2):
-            adjacent_idx = (1, 0)
+            opposite_idx = (1, 0)
 
-    adjacent_edge = up_face.get_edge(
-        adjacent_idx, rubik)
+    opposite_edge = up_corner["face"].get_edge(
+        opposite_idx, rubik)
 
-    if (cube["corner_j"]["color"] == adjacent_edge["color"]
-            and up_face[adjacent_idx] == cube["corner_i"]["color"]):
+    if (corner2["color"] == opposite_edge["color"]
+            and up_corner["face"][opposite_idx] == corner1["color"]):
         return 1
-    if (cube["corner_j"]["color"] == up_face[adjacent_idx]
-            and adjacent_edge["color"] == cube["corner_i"]["color"]):
+    if (corner2["color"] == up_corner["face"][opposite_idx]
+            and opposite_edge["color"] == corner1["color"]):
         return 2
     return None
 
 
-def is_opposite_left_well_placed(cube: Corner, rubik) -> bool:
-    adjacent_idx = None
-    corner_i_idx = cube["corner_i"]["index"]
-    match corner_i_idx:
+def is_opposite_left_well_placed(cube: Corner, rubik, on_top=False) -> bool:
+    opposite_idx, up_corner, up_idx, corner1, corner2 = None, None, None, None, None
+
+    if not on_top:
+        up_corner = cube["corner_i"]
+        up_idx = cube["corner_i"]["index"]
+        corner1 = cube["corner_i"]
+        corner2 = cube["corner_j"]
+    else:
+        up_corner = cube["corner"]
+        up_idx = cube["corner"]["index"]
+        match up_corner["index"]:
+            case (0, 2) | (2, 0):
+                corner1 = cube["corner_i"]
+                corner2 = cube["corner_j"]
+            case (0, 0) | (2, 2):
+                corner1 = cube["corner_j"]
+                corner2 = cube["corner_i"]
+
+    match up_idx:
         case (0, 2):
-            adjacent_idx = (1, 0)
+            opposite_idx = (1, 0)
         case (0, 0):
-            adjacent_idx = (2, 1)
+            opposite_idx = (2, 1)
         case (2, 0):
-            adjacent_idx = (1, 2)
+            opposite_idx = (1, 2)
         case (2, 2):
-            adjacent_idx = (0, 1)
+            opposite_idx = (0, 1)
 
-    adjacent_edge = cube["corner_i"]["face"].get_edge(
-        adjacent_idx, rubik)
-    print("in opposise left bis", cube["corner_i"]["index"], adjacent_idx, "\n",
-          cube["corner_j"]["color"], cube["corner_i"]["face"][adjacent_idx], "\n",
-          adjacent_edge["color"], cube["corner_i"]["color"])
+    opposite_edge = up_corner["face"].get_edge(
+        opposite_idx, rubik)
 
-    if (cube["corner_j"]["color"] == adjacent_edge["color"]
-            and cube["corner_i"]["face"][adjacent_idx] == cube["corner_i"]["color"]):
+    if (corner2["color"] == opposite_edge["color"]
+            and up_corner["face"][opposite_idx] == corner1["color"]):
         return 1
 
-    if (cube["corner_j"]["color"] == cube["corner_i"]["face"][adjacent_idx]
-            and adjacent_edge["color"] == cube["corner_i"]["color"]):
+    if (corner2["color"] == up_corner["face"][opposite_idx]
+            and opposite_edge["color"] == corner1["color"]):
         return 2
     return None
 
