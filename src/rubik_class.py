@@ -291,3 +291,7 @@ class Opposite_mouves:
                 rubik.rotate_face_clockwise("Right"),
             ),
         }
+
+    # def __setattr__(self, other: RubiksCube) -> RubiksCube:
+    #     other.cube = copy.copy(self.cube)
+    #     return other

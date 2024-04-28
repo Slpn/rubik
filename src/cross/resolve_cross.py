@@ -4,6 +4,7 @@ from face_class import Edge, Face, check_edge_color, dir_nodes
 import numpy as np
 from utils import CircularChainedList, get_face_to_mouve, mouves_dir, get_new_idx
 from vizualize import RubixVisualiser
+import random
 
 
 def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
@@ -13,6 +14,7 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
     cross_face = rubik.cube['Up']
     other_faces = [rubik.cube[other_face]
                    for other_face in rubik.cube if other_face != cross_face.dir]
+
     cross_mouves = []
 
     def free_cross(face_dir: str):
@@ -110,6 +112,9 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
                 break
 
     def is_cross_sorted() -> tuple | None:
+        """
+        Return true if the cross cube on the front are sorted
+        """
         colors_boucle = CircularChainedList(['B', 'R', 'G', 'O']).head_node
         cross_cubes = [idx if cross_face[idx]
                        == cross_face.color else None for idx in cross_idx]
@@ -173,7 +178,7 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
         idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
 
     while (len(well_placed) != 4):
-
+        random.shuffle(other_faces)
         for face in other_faces:
             do_break = False
             not_placed = is_cross_sorted()
@@ -215,6 +220,4 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
             idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
 
     print('Cross OK', len(cross_mouves))
-
-    rubik.soluce_mouves.append(cross_mouves)
     return cross_mouves

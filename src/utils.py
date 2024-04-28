@@ -50,6 +50,34 @@ mouves_dir = {
 }
 
 
+opposite_mouves = {
+    "U": "U'",
+    "U'": "U",
+    "U2": "U2",
+
+    "D": "D'",
+    "D'": "D",
+    "D2": "D2",
+
+    "F": "F'",
+    "F'": "F",
+    "F2": "F2",
+
+    "B": "B'",
+    "B'": "B",
+    "B2": "B2",
+
+    "L": "L'",
+    "L'": "L",
+    "L2": "L2",
+
+    "R": "R'",
+    "R'": "R",
+    "R2": "R2",
+
+}
+
+
 inverse_mouves_dir = {
     "U": "D'",
     "U'": "D",
@@ -100,7 +128,7 @@ y_prime_mouve_dir = {
 
     "R": "F",
     "R'": "F'",
-    "F2": "F2",
+    "R2": "F2",
 
 }
 # inverse_mouves_dir = {
@@ -272,3 +300,51 @@ def get_new_idx(idx: tuple, sense: str):
             i = 2 - idx[0]
             j = 2 - idx[1]
     return (i, j)
+
+
+def get_R_corner_top(idx: tuple):
+    match idx:
+        case (0, 0):
+            return 'Front'
+        case (0, 2):
+            return 'Right'
+        case (2, 0):
+            return 'Left'
+        case (2, 2):
+            return 'Bottom'
+
+
+def get_R_corner_Bottom(idx: tuple):
+    match idx:
+        case (0, 0):
+            return 'Left'
+        case (0, 2):
+            return 'Front'
+        case (2, 0):
+            return 'Bottom'
+        case (2, 2):
+            return 'Right'
+
+
+def get_R_corner_bottom(idx: tuple):
+    match idx:
+        case (0, 0):
+            return 'Left'
+        case (0, 2):
+            return 'Bottom'
+        case (2, 0):
+            return 'Front'
+        case (2, 2):
+            return 'Right'
+
+
+def get_F_corner_bottom(idx: tuple):
+    match idx:
+        case (0, 0):
+            return 'Bottom'
+        case (0, 2):
+            return 'Right'
+        case (2, 0):
+            return 'Left'
+        case (2, 2):
+            return 'Front'

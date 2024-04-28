@@ -1,3 +1,4 @@
+import copy
 from enum import Enum
 from typing import ForwardRef, NamedTuple
 import numpy as np
@@ -316,6 +317,12 @@ class Face():
             "corner_i": first_corner,
             "corner_j": second_corner
         }
+
+    # def __setattr__(self, other: Face) -> Face:
+    #     other.array = copy.copy(self.array)
+    #     other.color = self.color
+    #     other.dir = self.dir
+    #     return other
 
 
 def check_edge_color(face: Face, idx: tuple, rubix) -> bool:
