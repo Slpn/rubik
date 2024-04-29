@@ -24,7 +24,6 @@ def apply_mouves(mouves: list[str], rubik: RubiksCube, visualiser: RubixVisualis
         rubik.mouves[mouve]()
         if (visualiser):
             visualiser.visualizer_mouves[mouve]()
-        if visualise and visualiser:
             time.sleep(visualiser.SPEED)
 
 
@@ -170,7 +169,7 @@ inverse_mouves_dir = {
 }
 
 
-y_mouve_dir = {
+y2_mouve_dir = {
     "U": "U",
     "U'": "U'",
     "U2": "U2",
@@ -179,21 +178,103 @@ y_mouve_dir = {
     "D'": "D'",
     "D2": "D2",
 
-    "F": "L",
-    "F'": "L'",
-    "F2": "L2",
+    "F": "B",
+    "F'": "B'",
+    "F2": "B2",
 
-    "B": "R",
-    "B'": "R'",
-    "B2": "R2",
+    "B": "F",
+    "B'": "F'",
+    "B2": "F2",
 
-    "L": "B",
-    "L'": "B'",
-    "L2": "B2",
+    "L": "R",
+    "L'": "R'",
+    "L2": "R2",
 
-    "R": "F",
-    "R'": "F'",
-    "R2": "F2",
+    "R": "L",
+    "R'": "L'",
+    "R2": "L2",
+
+}
+
+y_mouves_dir = {
+    "U": "U",
+    "U'": "U'",
+    "U2": "U2",
+
+    "D": "D",
+    "D'": "D'",
+    "D2": "D2",
+
+    "F": "R",
+    "F'": "R'",
+    "F2": "R2",
+
+    "B": "L",
+    "B'": "L'",
+    "B2": "L2",
+
+    "L": "F",
+    "L'": "F'",
+    "L2": "F2",
+
+    "R": "B",
+    "R'": "B'",
+    "R2": "B2",
+
+}
+
+
+x_mouves_dir = {
+    "U": "B",
+    "U'": "B'",
+    "U2": "B2",
+
+    "D": "F",
+    "D'": "F'",
+    "D2": "F2",
+
+    "F": "U",
+    "F'": "U'",
+    "F2": "U2",
+
+    "B": "D",
+    "B'": "D'",
+    "B2": "D2",
+
+    "L": "L",
+    "L'": "L'",
+    "L2": "L2",
+
+    "R": "R",
+    "R'": "R'",
+    "R2": "R2",
+
+}
+
+x_prime_mouves_dir = {
+    "U": "F",
+    "U'": "F'",
+    "U2": "F2",
+
+    "D": "B",
+    "D'": "B'",
+    "D2": "B2",
+
+    "F": "D",
+    "F'": "D'",
+    "F2": "D2",
+
+    "B": "U",
+    "B'": "U'",
+    "B2": "U2",
+
+    "L": "L",
+    "L'": "L'",
+    "L2": "L2",
+
+    "R": "R",
+    "R'": "R'",
+    "R2": "R2",
 
 }
 
