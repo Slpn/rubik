@@ -2,14 +2,14 @@ import time
 from rubik_class import Opposite_mouves, RubiksCube
 from face_class import Edge, Face, check_edge_color, dir_nodes
 import numpy as np
-from utils import CircularChainedList, get_face_to_mouve, mouves_dir, get_new_idx
+from rubik_utils import get_face_to_mouve, mouves_dir, get_new_idx
 from vizualize import RubixVisualiser
 import random
+from utils import CircularChainedList
 
 
 def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
     cross_idx = [(0, 1), (1, 2), (2, 1), (1, 0)]
-    visualiser.SPEED = 0.1
     opposite_mouves = Opposite_mouves(rubik)
     cross_face = rubik.cube['Up']
     other_faces = [rubik.cube[other_face]
@@ -178,7 +178,7 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
         idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
 
     while (len(well_placed) != 4):
-        random.shuffle(other_faces)
+        # random.shuffle(other_faces)
         for face in other_faces:
             do_break = False
             not_placed = is_cross_sorted()
@@ -219,5 +219,4 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
         well_placed = [
             idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
 
-    print('Cross OK', len(cross_mouves))
     return cross_mouves

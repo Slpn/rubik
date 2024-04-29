@@ -6,18 +6,21 @@ from F2L.F2L_filters import *
 from rubik_class import Opposite_mouves, RubiksCube
 from face_class import Edge, Face, check_edge_color, dir_nodes, Corner
 import numpy as np
-from rubik_utils import get_face_to_mouve, mouves_dir, get_new_idx, inverse_mouves_dir, y_prime_mouve_dir, opposite_mouves
+from rubik_utils import apply_reversed_mouves
+from rubik_utils import mouves_dir, inverse_mouves_dir
 from vizualize import RubixVisualiser
 
 
 def find_mouves(white_corner_bad_placed, rubik: RubiksCube) -> list[str] | None:
     best_mouve, mouves, algo_num, best_algo = None, None, None, None
+    found_mouves = []
     for corner in white_corner_bad_placed:
         for cube in white_corner_bad_placed[corner]:
 
             if is_cube_well_placed(cube):
 
                 if (is_cube_on_top(cube)):
+
                     if (is_i_corner_equals_color(cube)):
                         if (adjacent := is_adjacent_well_placed(cube, rubik)):
                             if (adjacent["case"] == 1):
@@ -87,7 +90,6 @@ def find_mouves(white_corner_bad_placed, rubik: RubiksCube) -> list[str] | None:
                 elif (is_cube_up_face(cube)):
 
                     if (is_i_corner_equals_j_color(cube)):
-                        time.sleep(0)
                         if (adjacent := is_adjacent_mid_well_placed(cube, rubik)):
                             if (adjacent["case"] == 1):
                                 mouves, algo_num = algo.thirty_one(cube)
@@ -139,16 +141,18 @@ def find_mouves(white_corner_bad_placed, rubik: RubiksCube) -> list[str] | None:
                             elif (cube["corner"]["index"][1] == 2):
                                 mouves, algo_num = algo.forty_one(cube)
 
-            if (mouves and (best_mouve == None or len(mouves) < len(best_mouve))):
-                best_mouve = copy.copy(mouves)
-                best_algo = algo_num
-
-    return best_mouve, best_algo
+            # if (mouves and (best_mouve == None or len(mouves) < len(best_mouve))):
+            #     best_mouve = copy.copy(mouves)
+            #     best_algo = algo_num
+            if mouves:
+                found_mouves.append((mouves, algo_num))
+    # return best_mouve, best_algo
+    return found_mouves
 
 
 def find_mouves_bis(white_corner_well_placed, rubik: RubiksCube) -> list[str] | None:
     mouves, algo_num, best_mouve, best_algo = None, None, None, None
-
+    found_mouves = []
     for corner in white_corner_well_placed:
         if is_left_edge_well_placed(corner, rubik):
             mouves, algo_num = algo.twenty_six(
@@ -157,11 +161,13 @@ def find_mouves_bis(white_corner_well_placed, rubik: RubiksCube) -> list[str] | 
             mouves, algo_num = algo.twenty_five(
                 corner)
 
-        if (mouves and (best_mouve == None or len(mouves) < len(best_mouve))):
-            best_mouve = copy.copy(mouves)
-            best_algo = algo_num
+        # if (mouves and (best_mouve == None or len(mouves) < len(best_mouve))):
+        #     best_mouve = copy.copy(mouves)
+        #     best_algo = algo_num
+        if mouves:
+            found_mouves.append((mouves, algo_num))
 
-    if best_mouve == None:
+    if len(find_mouves) == 0:
         for corner_wp in white_corner_well_placed:
             R_face = rubik.cube[get_R_corner_bottom(
                 corner_wp['corner']['index'])]
@@ -169,15 +175,17 @@ def find_mouves_bis(white_corner_well_placed, rubik: RubiksCube) -> list[str] | 
                 (1, 0), rubik)
             if R_face[(1, 0)] == mid_edges["face"].color\
                     and mid_edges["color"] == R_face.color:
-                best_mouve, best_algo = algo.thirty_eight(R_face)
+                mouves, algo_num = algo.thirty_eight(R_face)
+                found_mouves.append((mouves, algo_num))
 
-    return best_mouve, best_algo
+#    return best_mouve, best_algo
+    return found_mouves
 
 
 def F2L(rubik: RubiksCube, visualiser: RubixVisualiser | None):
     soluce_mouves = []
     if visualiser:
-        visualiser.SPEED = 0.03
+        visualiser.SPEED = 0.0
     corner_index = [(0, 0), (0, 2), (2, 0), (2, 2)]
     faces = [rubik.cube[face] for face in rubik.cube]
 
@@ -199,55 +207,61 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser | None):
             "algo": None,
             "resolve_white": None
         }
-        for i in range(4):
+        up_mouve = random.choice(["U", "U'", "U2"]) if len(
+            replaced_edges) == 0 else random.choice(["U", "U'"])
+        for i in range(4 if up_mouve != "U2" else 2):
             if len(list(filter(lambda elem: len(white_corner_bad_placed[elem]) > 0, white_corner_bad_placed))):
-                mouves, algo_num = find_mouves(
+                found_mouves = find_mouves(
                     white_corner_bad_placed, rubik)
-                if mouves and (best_mouve["mouves"] == None or len(mouves) + (1 if i > 0 else 0) < best_mouve["cost"] or not best_mouve["resolve_white"]):
+                if len(found_mouves):
+                    chosen_mouve = random.choice(found_mouves)
+                    mouves = chosen_mouve[0]
+                    algo_num = chosen_mouve[1]
                     best_mouve["mouves"] = copy.copy(mouves)
                     best_mouve["turn"] = i
                     best_mouve["algo"] = algo_num
                     best_mouve["cost"] = len(mouves) + (1 if i > 0 else 0)
                     best_mouve["resolve_white"] = True
-                    j = 1
-                    while (len(soluce_mouves) >= j and (len(mouves) > 1 and soluce_mouves[-j] == opposite_mouves[mouves[j - 1]]
-                           or soluce_mouves[-j] == [mouves[j - 1]])):
-                        best_mouve["cost"] -= 1
-                        j += 1
-            if best_mouve["mouves"] == None or best_mouve["algo"] == 38:
+                    break
+            if best_mouve["mouves"] == None:
                 white_corner_well_placed = [corner for corner in all_corner['Up']
                                             if corner['corner']['color'] == 'W' and is_final_pos(corner)]
-                mouves, algo_num = find_mouves_bis(
+                found_mouves = find_mouves_bis(
                     white_corner_well_placed, rubik)
-                if mouves and (best_mouve["mouves"] == None or len(mouves) + (1 if i > 0 else 0) < best_mouve["cost"]):
+                if len(found_mouves):
+                    chosen_mouve = random.choice(found_mouves)
+                    mouves = chosen_mouve[0]
+                    algo_num = chosen_mouve[1]
                     best_mouve["mouves"] = copy.copy(mouves)
                     best_mouve["turn"] = i
                     best_mouve["algo"] = algo_num
                     best_mouve["cost"] = len(mouves) + (1 if i > 0 else 0)
-                    j = 1
-                    while (len(soluce_mouves) >= j and (len(mouves) > 1 and soluce_mouves[-j] == opposite_mouves[mouves[j - 1]]
-                           or soluce_mouves[-j] == [mouves[j - 1]])):
-                        best_mouve["cost"] -= 1
-                        j += 1
+                    break
 
-            mouve_F2L(soluce_mouves, ['U'], rubik, visualiser)
+            apply_reversed_mouves([up_mouve], rubik, visualiser)
+            soluce_mouves.append(inverse_mouves_dir[up_mouve])
             all_corner = {face.dir: [face.get_corners(
                 index, rubik) for index in corner_index] for face in faces}
             white_corner_bad_placed = {face: [corner for corner in all_corner[face]
                                               if corner['corner']['color'] == 'W' and not is_final_pos(corner)]for face in all_corner}
 
-        for i in range(len(soluce_mouves) - 1, len(soluce_mouves) - 4 - 1, -1):
+        for i in range(len(soluce_mouves) - 1, len(soluce_mouves) - i - 1, -1):
             soluce_mouves.pop(i)
 
         if (best_mouve["mouves"]):
             replaced_edges = []
-            if (best_mouve["turn"] == 1):
-                mouve_F2L(soluce_mouves, ['U'], rubik, visualiser)
-            elif (best_mouve["turn"] == 2):
-                mouve_F2L(soluce_mouves, ['U2'], rubik, visualiser)
-            elif (best_mouve["turn"] == 3):
-                mouve_F2L(soluce_mouves, ["U'"], rubik, visualiser)
-            mouve_F2L(soluce_mouves, best_mouve["mouves"], rubik, visualiser)
+            # if (best_mouve["turn"] == 1):
+            #     apply_reversed_mouves(['U'], rubik, visualiser)
+            #     soluce_mouves.append(inverse_mouves_dir['U'])
+            # elif (best_mouve["turn"] == 2):
+            #     apply_reversed_mouves(['U2'], rubik, visualiser)
+            #     soluce_mouves.append(inverse_mouves_dir['U2'])
+            # elif (best_mouve["turn"] == 3):
+            #     apply_reversed_mouves(["U'"], rubik, visualiser)
+            #     soluce_mouves.append(inverse_mouves_dir["U'"])
+            apply_reversed_mouves(best_mouve["mouves"], rubik, visualiser)
+            for mouve_ in best_mouve["mouves"]:
+                soluce_mouves.append(inverse_mouves_dir[mouve_])
 
         else:
             if len(replaced_edges):
@@ -285,6 +299,8 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser | None):
     #         turn = 0
     #         replaced_edges = []
 
+    # print(soluce_mouves, len(soluce_mouves))
+
     return soluce_mouves
 
 
@@ -293,7 +309,9 @@ def place_edges(soluce_mouves: list[str], mid_edges: dict[str, Edge], rubik: Rub
         if rubik.cube[face][(1, 0)] == mid_edges[face]["face"].color\
                 and mid_edges[face]["color"] == rubik.cube[face].color:
             mouves = algo.thirty_eight(face)
-            mouve_F2L(soluce_mouves, mouves, rubik, visualiser)
+            apply_reversed_mouves(mouves, rubik, visualiser)
+            for _mouve in mouves:
+                soluce_mouves.append(inverse_mouves_dir[_mouve])
             return True
 
     mouves = []
@@ -310,9 +328,12 @@ def place_edges(soluce_mouves: list[str], mid_edges: dict[str, Edge], rubik: Rub
                 break
 
     if (len(mouves) == 0):
-        mouve_F2L(soluce_mouves, ["U"], rubik, visualiser)
+        apply_reversed_mouves(["U"], rubik, visualiser)
+        soluce_mouves.append(inverse_mouves_dir["U"])
         return False
-    mouve_F2L(soluce_mouves, mouves, rubik, visualiser)
+    apply_reversed_mouves(mouves, rubik, visualiser)
+    for _mouve in mouves:
+        soluce_mouves.append(inverse_mouves_dir[_mouve])
     return True
 
 
@@ -320,7 +341,7 @@ def replace_edge(soluce_mouves: list[str], tried, rubik: RubiksCube, visualiser:
     sense1 = None
     sense2 = None
     faces = ["Front", "Left", "Bottom", "Right"]
-    # random.shuffle(faces)
+    random.shuffle(faces)
     for face in faces:
         if (face + "+" + ('nf' if is_not_found else '') not in tried and not is_chunck_resolved(face, "+", rubik, is_not_found)):
             to_mouve = face
@@ -339,34 +360,26 @@ def replace_edge(soluce_mouves: list[str], tried, rubik: RubiksCube, visualiser:
     if not sense1:
         return replace_edge(soluce_mouves, tried, rubik, visualiser, is_not_found=True)
 
-    mouve_F2L(soluce_mouves, [mouves_dir[to_mouve][sense1], "U'",
-              mouves_dir[to_mouve][sense2]], rubik, visualiser)
+    mouves = [mouves_dir[to_mouve][sense1], "U'",
+              mouves_dir[to_mouve][sense2]]
+    apply_reversed_mouves(mouves, rubik, visualiser)
+    for _mouve in mouves:
+        soluce_mouves.append(inverse_mouves_dir[_mouve])
+
     return to_mouve + sense1 + ('nf' if is_not_found else '')
 
 
-def mouve_F2L(soluce_mouves: list[str], mouves: list[str], rubik: RubiksCube, visualiser: RubixVisualiser | None):
-
-    for mouve in mouves:
-        user_continue = ""
-        while (visualiser and user_continue != "y"):
-            user_continue = input("Tapez y pour le prochain mouv: ")
-        rubik.mouves[inverse_mouves_dir[mouve]]()
-        if visualiser:
-            visualiser.visualizer_mouves[inverse_mouves_dir[mouve]]()
-            time.sleep(visualiser.SPEED)
-        soluce_mouves.append(inverse_mouves_dir[mouve])
-
-
-def cancel_mouves(soluce_mouves: list[str], count: int, rubik: RubiksCube, visualiser: RubixVisualiser | None):
+def cancel_mouves(soluce_mouves: list[str], count: int, rubik: RubiksCube, visualiser: RubixVisualiser | None, visualise=False):
     opposite_mouves = Opposite_mouves(rubik)
     for i in range(len(soluce_mouves) - 1, len(soluce_mouves) - count - 1, -1):
         user_continue = ""
-        while (visualiser and user_continue != "y"):
+        while (visualise and visualiser and user_continue != "y"):
             user_continue = input("Tapez y pour le prochain mouv: ")
 
         opposite_mouves.mouves[soluce_mouves[i]]()
-        if (visualiser):
+        if visualiser:
             visualiser.opposite_mouves[soluce_mouves[i]](
             )
+        if (visualise and visualiser):
             time.sleep(visualiser.SPEED)
         soluce_mouves.pop(i)

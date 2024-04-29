@@ -1,3 +1,4 @@
+import copy
 from enum import Enum
 
 
@@ -15,122 +16,7 @@ color_codes = {
 
 }
 
-mouves_dir = {
-    "Right": {
-        "opposite": 'R2',
-        "+": "R",
-        "-": "R'",
-    },
-    "Left": {
-        "opposite": 'L2',
-        "+": "L",
-        "-": "L'",
-    },
-    "Front": {
-        "opposite": 'F2',
-        "+": "F",
-        "-": "F'",
-    },
-    "Bottom": {
-        "opposite": 'B2',
-        "+": "B",
-        "-": "B'",
-    },
-    "Up": {
-        "opposite": 'U2',
-        "+": "U",
-        "-": "U'",
-    },
-    "Down": {
-        "opposite": 'D2',
-        "+": "D",
-        "-": "D'",
-    },
 
-}
-
-
-opposite_mouves = {
-    "U": "U'",
-    "U'": "U",
-    "U2": "U2",
-
-    "D": "D'",
-    "D'": "D",
-    "D2": "D2",
-
-    "F": "F'",
-    "F'": "F",
-    "F2": "F2",
-
-    "B": "B'",
-    "B'": "B",
-    "B2": "B2",
-
-    "L": "L'",
-    "L'": "L",
-    "L2": "L2",
-
-    "R": "R'",
-    "R'": "R",
-    "R2": "R2",
-
-}
-
-
-inverse_mouves_dir = {
-    "U": "D'",
-    "U'": "D",
-    "U2": "D2",
-
-    "D": "U'",
-    "D'": "U",
-    "D2": "U2",
-
-    "F": "F'",
-    "F'": "F",
-    "F2": "F2",
-
-    "B": "B'",
-    "B'": "B",
-    "B2": "B2",
-
-    "L": "L'",
-    "L'": "L",
-    "L2": "L2",
-
-    "R": "R'",
-    "R'": "R",
-    "R2": "R2",
-
-}
-
-y_prime_mouve_dir = {
-    "U": "U",
-    "U'": "U'",
-    "U2": "U2",
-
-    "D": "D",
-    "D'": "D'",
-    "D2": "D2",
-
-    "F": "L",
-    "F'": "L'",
-    "F2": "L2",
-
-    "B": "R",
-    "B'": "R'",
-    "B2": "R2",
-
-    "L": "B",
-    "L'": "B'",
-    "L2": "B2",
-
-    "R": "F",
-    "R'": "F'",
-    "R2": "F2",
-
-}
 # inverse_mouves_dir = {
 #     "Right": {
 #         "opposite": 'R2',
@@ -165,40 +51,6 @@ y_prime_mouve_dir = {
 
 # }
 
-
-def get_face_to_mouve(from_face: str, index: tuple):
-    i, j = index[0], index[1]
-    match from_face:
-        case 'Up' | 'Down':
-            if i == 2:
-                to_mouve = 'Front' if from_face == 'Up' else 'Bottom'
-            elif i == 0:
-                to_mouve = 'Bottom' if from_face == 'Up' else 'Front'
-            else:
-                to_mouve = "Left" if j == 0 else 'Right'
-
-        case 'Bottom' | 'Front':
-            if i == 2:
-                to_mouve = 'Down'
-            elif i == 0:
-                to_mouve = 'Up'
-            else:
-                if from_face == 'Front':
-                    to_mouve = "Left" if j == 0 else 'Right'
-                else:
-                    to_mouve = "Left" if j == 2 else 'Right'
-
-        case 'Left' | 'Right':
-            if i == 2:
-                to_mouve = 'Down'
-            elif i == 0:
-                to_mouve = 'Up'
-            else:
-                if from_face == 'Right':
-                    to_mouve = 'Front' if j == 0 else 'Bottom'
-                else:
-                    to_mouve = 'Front' if j == 2 else 'Bottom'
-    return to_mouve
 
 # def get_9_cubes(color, first_edge, seconde_edge, third_edge, fourth_edge):
 #     return np.array([
@@ -283,68 +135,3 @@ class CircularChainedList:
                 iter_node = iter_node.next
             new_node.next = self.head_node
             iter_node.next = new_node
-
-
-def get_new_idx(idx: tuple, sense: str):
-    i, j = None, None
-    match sense:
-        case '+':
-            i = idx[1]
-            j = 2 - idx[0]
-
-        case '-':
-            i = 2 - idx[1]
-            j = idx[0]
-
-        case 'opposite':
-            i = 2 - idx[0]
-            j = 2 - idx[1]
-    return (i, j)
-
-
-def get_R_corner_top(idx: tuple):
-    match idx:
-        case (0, 0):
-            return 'Front'
-        case (0, 2):
-            return 'Right'
-        case (2, 0):
-            return 'Left'
-        case (2, 2):
-            return 'Bottom'
-
-
-def get_R_corner_Bottom(idx: tuple):
-    match idx:
-        case (0, 0):
-            return 'Left'
-        case (0, 2):
-            return 'Front'
-        case (2, 0):
-            return 'Bottom'
-        case (2, 2):
-            return 'Right'
-
-
-def get_R_corner_bottom(idx: tuple):
-    match idx:
-        case (0, 0):
-            return 'Left'
-        case (0, 2):
-            return 'Bottom'
-        case (2, 0):
-            return 'Front'
-        case (2, 2):
-            return 'Right'
-
-
-def get_F_corner_bottom(idx: tuple):
-    match idx:
-        case (0, 0):
-            return 'Bottom'
-        case (0, 2):
-            return 'Right'
-        case (2, 0):
-            return 'Left'
-        case (2, 2):
-            return 'Front'

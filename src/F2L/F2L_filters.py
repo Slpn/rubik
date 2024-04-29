@@ -3,7 +3,7 @@
 import time
 from face_class import Corner, Edge, Face
 from rubik_class import RubiksCube
-from utils import get_F_corner_bottom, get_R_corner_bottom
+from rubik_utils import get_F_corner_bottom, get_R_corner_bottom
 
 
 def is_chunck_resolved(face_dir: str, sense: str, rubik: RubiksCube, is_not_found: False):
@@ -212,15 +212,6 @@ def is_adjacent_mid_well_placed(cube: Corner, rubik):
     adjacent = (1, cube["corner_j"]["index"][1])
     adjacent_edge = cube["corner_j"]["face"].get_edge(
         adjacent, rubik)
-    print('is_adjacent_mid_well_placed')
-    print(adjacent)
-    print(adjacent_edge)
-    print(cube["corner_i"]["color"])
-    print(cube["corner_j"]["color"])
-    print()
-    print(cube["corner_j"]["face"][adjacent])
-    print(cube["corner_j"]["face"].color)
-    print(cube["corner_i"]["face"].color)
     if (cube["corner_j"]["color"] == cube["corner_j"]["face"][adjacent]
             and adjacent_edge["color"] == cube["corner_i"]["color"]):
         return {"case": 1, "edge": adjacent_edge, "idx": adjacent}
@@ -318,7 +309,6 @@ def is_right_edge_well_placed(corner: Corner, rubik: RubiksCube):
     face = rubik.cube[get_R_corner_bottom(corner["corner"]["index"])]
     top_edges = face.get_edge((2, 1), rubik)
     adjacent_face = rubik.cube[get_F_corner_bottom(corner["corner"]["index"])]
-    print("is_right_edge_well_placed", face.color, adjacent_face.color)
     if (face.color == face[(2, 1)]
             and top_edges["color"] == adjacent_face.color):
         return corner
@@ -330,7 +320,6 @@ def is_left_edge_well_placed(corner: Corner,  rubik: RubiksCube):
     face = rubik.cube[get_F_corner_bottom(corner["corner"]["index"])]
     top_edges = face.get_edge((2, 1), rubik)
     adjacent_face = rubik.cube[get_R_corner_bottom(corner["corner"]["index"])]
-    print("is_left_edge_well_placed", face.color, adjacent_face.color)
     if (face.color == face[(2, 1)]
             and top_edges["color"] == adjacent_face.color):
         return corner
@@ -357,7 +346,6 @@ def left_up_edge_well_placed(cube: Corner, rubik: RubiksCube):
     adjacent_face = rubik.cube[get_R_corner_bottom(cube["corner_i"]["index"])]
     edge = face.get_edge((2, 1), rubik)
 
-    print("left_up_edge_well_placed", face.dir, edge)
     if (face[2, 1] == face.color) and \
             edge['color'] == adjacent_face.color:
         return {"face_dir": face.dir, "edge": edge, "case": 1 if cube["corner"]["index"][1] == 2

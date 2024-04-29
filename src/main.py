@@ -4,9 +4,12 @@ import sys
 import threading
 import time
 from F2L.F2L import F2L
+from OLL.OLL import OLL
 from cross.resolve_cross import resolve_cross
 from rubik_class import RubiksCube
+from rubik_utils import apply_mouves, clear_mouves
 from vizualize import RubixVisualiser, launch_vizualiser
+import numpy as np
 
 
 def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser):
@@ -64,6 +67,35 @@ def test_mouves(visualiser: RubixVisualiser, rubik: RubiksCube,  stop_event: thr
     print(mouves_sequence)
 
 
+def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
+
+    rubik_conf = copy.deepcopy(rubik.cube)
+    visualiser.SPEED = 0.0
+    mouves = None
+    for i in range(1):
+        cross_mouves_tmp = resolve_cross(rubik, None)
+        F2L_mouves_tmp = F2L(rubik, None)
+        if (mouves == None or (F2L_mouves_tmp != None and cross_mouves_tmp != None and len(cross_mouves_tmp) + len(F2L_mouves_tmp) < len(mouves))):
+            mouves = copy.copy(cross_mouves_tmp)+copy.copy(F2L_mouves_tmp)
+        if F2L_mouves_tmp:
+            print(len(cross_mouves_tmp) + len(F2L_mouves_tmp),
+                  len(cross_mouves_tmp), len(F2L_mouves_tmp))
+        rubik.cube = copy.deepcopy(rubik_conf)
+
+    print("end", len(mouves))
+
+    rubik.soluce_mouves = mouves
+
+    clear_mouves(rubik)
+
+    print('Final', len(rubik.soluce_mouves))
+
+    visualiser.SPEED = 0.01
+    apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
+
+    OLL(rubik)
+
+
 if __name__ == "__main__":
 
     try:
@@ -73,22 +105,16 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-        # mix_rubiks(sys.argv[1], rubik, visualiser)
-        random_scramble(rubik, visualiser)
+        mix_rubiks(sys.argv[1], rubik, visualiser)
+       # random_scramble(rubik, visualiser)
         rubik.pretty_print()
 
-        rubik_conf = copy.deepcopy(rubik.cube)
+        resolve_rubik_thread = threading.Thread(
+            target=resolve_rubik, args=[rubik, visualiser])
+        resolve_rubik_thread.start()
 
-        cross_mouves = None
-        for i in range(10):
-            cross_mouves_tmp = resolve_cross(rubik, visualiser)
-            if (cross_mouves == None or len(cross_mouves_tmp) < len(cross_mouves)):
-                cross_mouves = copy.copy(cross_mouves_tmp)
-            rubik.cube = copy.deepcopy(rubik_conf)
-
-        print('final', len(cross_mouves))
-        for elem in cross_mouves:
-            rubik.soluce_mouves.append(elem)
+        launch_vizualiser()
+        sys.exit()
 
       #  thread_test.start()
      #   thread_test.join()
