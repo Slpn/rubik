@@ -90,7 +90,7 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
 
     print('Final', len(rubik.soluce_mouves))
 
-    visualiser.SPEED = 0.02
+    visualiser.SPEED = 0.01
     apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
 
     OLL(rubik)
