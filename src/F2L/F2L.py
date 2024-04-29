@@ -320,7 +320,7 @@ def replace_edge(soluce_mouves: list[str], tried, rubik: RubiksCube, visualiser:
     sense1 = None
     sense2 = None
     faces = ["Front", "Left", "Bottom", "Right"]
-    # random.shuffle(faces)
+    random.shuffle(faces)
     for face in faces:
         if (face + "+" + ('nf' if is_not_found else '') not in tried and not is_chunck_resolved(face, "+", rubik, is_not_found)):
             to_mouve = face

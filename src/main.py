@@ -72,7 +72,7 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
     rubik_conf = copy.deepcopy(rubik.cube)
     visualiser.SPEED = 0.0
     mouves = None
-    for i in range(1):
+    for i in range(200):
         cross_mouves_tmp = resolve_cross(rubik, None)
         F2L_mouves_tmp = F2L(rubik, None)
         if (mouves == None or (F2L_mouves_tmp != None and cross_mouves_tmp != None and len(cross_mouves_tmp) + len(F2L_mouves_tmp) < len(mouves))):
@@ -90,7 +90,7 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
 
     print('Final', len(rubik.soluce_mouves))
 
-    visualiser.SPEED = 0.01
+    visualiser.SPEED = 0.02
     apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
 
     OLL(rubik)
@@ -105,8 +105,8 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-        mix_rubiks(sys.argv[1], rubik, visualiser)
-       # random_scramble(rubik, visualiser)
+        # mix_rubiks(sys.argv[1], rubik, visualiser)
+        random_scramble(rubik, visualiser)
         rubik.pretty_print()
 
         resolve_rubik_thread = threading.Thread(

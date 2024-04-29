@@ -11,11 +11,11 @@ def get_down_with_adjacent(rubik: RubiksCube):
         rubik.cube["Down"])
 
     down_w_adj = np.array([
-        np.concatenate([['_'], front_edge[::-1], ['_']]),
-        np.concatenate([[right_edge[0]], face_array[0][::-1], [left_edge[2]]]),
-        np.concatenate([[right_edge[1]], face_array[1][::-1], [left_edge[1]]]),
-        np.concatenate([[right_edge[2]], face_array[2][::-1], [left_edge[0]]]),
-        np.concatenate([['_'], bottom_edge, ['_']])
+        np.concatenate([['_'], bottom_edge[::-1], ['_']]),
+        np.concatenate([[left_edge[0]], face_array[2], [right_edge[2]]]),
+        np.concatenate([[left_edge[1]], face_array[1], [right_edge[1]]]),
+        np.concatenate([[left_edge[2]], face_array[0], [right_edge[0]]]),
+        np.concatenate([['_'], front_edge, ['_']])
 
     ])
     mask = (down_w_adj != 'Y')

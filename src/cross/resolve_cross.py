@@ -178,7 +178,7 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
         idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
 
     while (len(well_placed) != 4):
-        # random.shuffle(other_faces)
+        random.shuffle(other_faces)
         for face in other_faces:
             do_break = False
             not_placed = is_cross_sorted()
