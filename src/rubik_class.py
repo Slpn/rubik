@@ -11,7 +11,7 @@ class RubiksCube:
         self.cube: dict[Faces_Dir, Face] = self.reset_cube()
         mouves = Mouves(self)
         self.mouves = mouves.mouves
-        self.soluce_mouves = []
+        self.soluce_mouves: list = []
 
     def reset_cube(self):
 

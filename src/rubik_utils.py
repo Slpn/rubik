@@ -24,7 +24,6 @@ def apply_mouves(mouves: list[str], rubik: RubiksCube, visualiser: RubixVisualis
         rubik.mouves[mouve]()
         if (visualiser):
             visualiser.visualizer_mouves[mouve]()
-        if visualise and visualiser:
             time.sleep(visualiser.SPEED)
 
 
@@ -170,34 +169,6 @@ inverse_mouves_dir = {
 }
 
 
-y_mouve_dir = {
-    "U": "U",
-    "U'": "U'",
-    "U2": "U2",
-
-    "D": "D",
-    "D'": "D'",
-    "D2": "D2",
-
-    "F": "L",
-    "F'": "L'",
-    "F2": "L2",
-
-    "B": "R",
-    "B'": "R'",
-    "B2": "R2",
-
-    "L": "B",
-    "L'": "B'",
-    "L2": "B2",
-
-    "R": "F",
-    "R'": "F'",
-    "R2": "F2",
-
-}
-
-
 y_prime_mouve_dir = {
     "U": "U",
     "U'": "U'",
@@ -222,8 +193,121 @@ y_prime_mouve_dir = {
     "R": "F",
     "R'": "F'",
     "R2": "F2",
+}
+
+
+y2_mouve_dir = {
+    "U": "U",
+    "U'": "U'",
+    "U2": "U2",
+
+    "D": "D",
+    "D'": "D'",
+    "D2": "D2",
+
+    "F": "B",
+    "F'": "B'",
+    "F2": "B2",
+
+    "B": "F",
+    "B'": "F'",
+    "B2": "F2",
+
+    "L": "R",
+    "L'": "R'",
+    "L2": "R2",
+
+    "R": "L",
+    "R'": "L'",
+    "R2": "L2",
 
 }
+
+
+y_mouves_dir = {v: k for k, v in y_prime_mouve_dir.items()}
+
+
+x_mouves_dir = {
+    "U": "F",
+    "U'": "F'",
+    "U2": "F2",
+
+    "D": "B",
+    "D'": "B'",
+    "D2": "B2",
+
+    "F": "D",
+    "F'": "D'",
+    "F2": "D2",
+
+    "B": "U",
+    "B'": "U'",
+    "B2": "U2",
+
+    "L": "L",
+    "L'": "L'",
+    "L2": "L2",
+
+    "R": "R",
+    "R'": "R'",
+    "R2": "R2",
+}
+
+x2_mouves_dir = {
+    "U": "D",
+    "U'": "D'",
+    "U2": "D2",
+
+    "D": "U",
+    "D'": "U'",
+    "D2": "U2",
+
+    "F": "B",
+    "F'": "B'",
+    "F2": "B2",
+
+    "B": "F",
+    "B'": "F'",
+    "B2": "F2",
+
+    "L": "L",
+    "L'": "L'",
+    "L2": "L2",
+
+    "R": "R",
+    "R'": "R'",
+    "R2": "R2",
+}
+x_prime_mouves_dir = {v: k for k, v in x_mouves_dir.items()}
+
+
+z_mouves_dir = {
+    "U": "L",
+    "U'": "L'",
+    "U2": "L2",
+
+    "D": "R",
+    "D'": "R'",
+    "D2": "R2",
+
+    "F": "F",
+    "F'": "F'",
+    "F2": "F2",
+
+    "B": "B",
+    "B'": "B'",
+    "B2": "B2",
+
+    "L": "D",
+    "L'": "D'",
+    "L2": "D2",
+
+    "R": "U",
+    "R'": "U'",
+    "R2": "U2",
+}
+
+z_prime_mouves_dir = {v: k for k, v in z_mouves_dir.items()}
 
 
 def get_new_idx(idx: tuple, sense: str):
