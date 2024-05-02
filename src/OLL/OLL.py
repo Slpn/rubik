@@ -3,7 +3,10 @@
 from rubik_class import RubiksCube
 import numpy as np
 from OLL.OLL_algos import algos
-from rubik_utils import inverse_mouves_dir, x_mouves_dir, x_prime_mouves_dir, y_mouves_dir, y_prime_mouve_dir, y2_mouve_dir
+from rubik_utils import inverse_mouves_dir, \
+    x_mouves_dir, x_prime_mouves_dir, \
+    y_mouves_dir, y_prime_mouve_dir, y2_mouve_dir, \
+    z_mouves_dir, z_prime_mouves_dir, x2_mouves_dir
 
 
 def get_down_with_adjacent(rubik: RubiksCube):
@@ -60,22 +63,106 @@ def append_y2_prime_mouve(soluce_mouves: list[str], mouve: str):
 
 
 def make_mouve(soluce_mouves: list[str], found_oll: dict, append_func: callable):
-    x = False
-    x_prime = False
+    x, x_prime, z, z_prime, y, y_prime, x2 = False, False, False, False, False, False, False
+
     print('in make mouves', found_oll)
     for mouve in found_oll['mouves']:
-        if (mouve == "r'"):
-            append_func(soluce_mouves, "L'")
-            x = True
-            continue
-        elif (mouve == "r"):
-            append_func(soluce_mouves, "L")
-            x = True
-            continue
-        if x:
-            append_func(soluce_mouves, x_mouves_dir[mouve])
+        to_append = mouve
+        match to_append:
+            case "x" | "r" | "l'" | "M'" | "M2":
+                if x_prime:
+                    x_prime = False
+                else:
+                    x = True
+
+                if to_append == "r":
+                    to_append = "L"
+                elif to_append == "l'":
+                    to_append = "R'"
+                elif to_append == "M'":
+                    append_func(soluce_mouves, "L")
+                    to_append = "R'"
+                elif to_append == 'M2':
+                    append_func(soluce_mouves, "L2")
+                    to_append = "R2"
+                    print("M2")
+                    x = True
+                    x_prime = False
+
+                else:
+                    continue
+
+            case "x'" | "r'" | "l" | 'M':
+                if x:
+                    x = False
+                else:
+                    x_prime = True
+
+                if to_append == "r'":
+                    to_append = "L'"
+                elif to_append == "l":
+                    to_append = "R"
+                elif to_append == 'M':
+                    append_func(soluce_mouves, "L'")
+                    to_append = 'R'
+                else:
+                    continue
+
+            case "z" | "f" | "b'":
+                if z:
+                    z_prime = False
+                else:
+                    z = True
+
+                if to_append == "f":
+                    to_append = "B"
+                elif to_append == "b'":
+                    to_append = "F'"
+                else:
+                    continue
+
+            case "z'" | "f'" | "b":
+                if z:
+                    z = False
+                else:
+                    z_prime = True
+
+                if to_append == "f'":
+                    to_append = "B'"
+                elif to_append == "b":
+                    to_append = "F"
+                else:
+                    continue
+
+            case 'y':
+                if y_prime:
+                    y_prime = False
+                else:
+                    y = True
+
+                continue
+
+            case "y'":
+                if y:
+                    y = False
+                else:
+                    y_prime = True
+
+                continue
+
+        print("zzzzz", z)
+        if z:
+            append_func(soluce_mouves, z_mouves_dir[to_append])
+        elif z_prime:
+            append_func(soluce_mouves, z_prime_mouves_dir[to_append])
+        elif x:
+            append_func(soluce_mouves, x_mouves_dir[to_append])
+        elif x_prime:
+            append_func(soluce_mouves, x_prime_mouves_dir[to_append])
+        elif x2:
+            append_func(soluce_mouves, x2_mouves_dir[to_append])
         else:
-            append_func(soluce_mouves, mouve)
+            append_func(soluce_mouves, to_append)
 
 
 def OLL(rubik: RubiksCube):
@@ -85,11 +172,11 @@ def OLL(rubik: RubiksCube):
     def append_func(): return None
     if (rotate == 0):
         append_func = append_mouve
-    if rotate == 3:
+    elif rotate == 3:
         append_func = append_y_mouve
-    if rotate == 1:
+    elif rotate == 1:
         append_func = append_y_prime_mouve
-    if rotate == 2:
+    elif rotate == 2:
         append_func = append_y2_prime_mouve
 
     make_mouve(soluce_mouves, found_oll, append_func)

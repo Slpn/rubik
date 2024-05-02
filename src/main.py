@@ -10,6 +10,7 @@ from rubik_class import RubiksCube
 from rubik_utils import apply_mouves, clear_mouves
 from vizualize import RubixVisualiser, launch_vizualiser
 import numpy as np
+from OLL.OLL_algos import algos as OLL_algo
 
 
 def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser):
@@ -67,6 +68,23 @@ def test_mouves(visualiser: RubixVisualiser, rubik: RubiksCube,  stop_event: thr
     print(mouves_sequence)
 
 
+def config_OLL(num: int, rubik: RubiksCube):
+    algo = list(filter(lambda elem: elem["num"] == num, OLL_algo))[0]
+    shema = algo["shema"]
+
+    rubik.cube["Bottom"].array[2] = shema[0][1:4][::-1]
+    rubik.cube["Front"].array[2] = shema[4][1:4]
+    j = 0
+    for i in range(1, 4):
+        rubik.cube["Left"].array[2][j] = shema[i][0]
+        rubik.cube["Right"].array[2][j] = shema[4 - i][4]
+        j += 1
+
+    rubik.cube['Down'].array[2] = shema[1][1:4]
+    rubik.cube['Down'].array[1] = shema[2][1:4]
+    rubik.cube['Down'].array[0] = shema[3][1:4]
+
+
 def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
 
     rubik_conf = copy.deepcopy(rubik.cube)
@@ -99,6 +117,7 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
 
     visualiser.SPEED = 0.02
     apply_mouves(oll_mouves, rubik, visualiser, True)
+    rubik.pretty_print()
 
 
 if __name__ == "__main__":
@@ -110,9 +129,10 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
+       # config_OLL(18, rubik)
         mix_rubiks(sys.argv[1], rubik, visualiser)
-        # random_scramble(rubik, visualiser)
-        rubik.pretty_print()
+        random_scramble(rubik, visualiser)
+    #    rubik.pretty_print()
 
         resolve_rubik_thread = threading.Thread(
             target=resolve_rubik, args=[rubik, visualiser])

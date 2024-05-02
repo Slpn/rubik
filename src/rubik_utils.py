@@ -169,6 +169,33 @@ inverse_mouves_dir = {
 }
 
 
+y_prime_mouve_dir = {
+    "U": "U",
+    "U'": "U'",
+    "U2": "U2",
+
+    "D": "D",
+    "D'": "D'",
+    "D2": "D2",
+
+    "F": "L",
+    "F'": "L'",
+    "F2": "L2",
+
+    "B": "R",
+    "B'": "R'",
+    "B2": "R2",
+
+    "L": "B",
+    "L'": "B'",
+    "L2": "B2",
+
+    "R": "F",
+    "R'": "F'",
+    "R2": "F2",
+}
+
+
 y2_mouve_dir = {
     "U": "U",
     "U'": "U'",
@@ -196,62 +223,11 @@ y2_mouve_dir = {
 
 }
 
-y_mouves_dir = {
-    "U": "U",
-    "U'": "U'",
-    "U2": "U2",
 
-    "D": "D",
-    "D'": "D'",
-    "D2": "D2",
-
-    "F": "R",
-    "F'": "R'",
-    "F2": "R2",
-
-    "B": "L",
-    "B'": "L'",
-    "B2": "L2",
-
-    "L": "F",
-    "L'": "F'",
-    "L2": "F2",
-
-    "R": "B",
-    "R'": "B'",
-    "R2": "B2",
-
-}
+y_mouves_dir = {v: k for k, v in y_prime_mouve_dir.items()}
 
 
 x_mouves_dir = {
-    "U": "B",
-    "U'": "B'",
-    "U2": "B2",
-
-    "D": "F",
-    "D'": "F'",
-    "D2": "F2",
-
-    "F": "U",
-    "F'": "U'",
-    "F2": "U2",
-
-    "B": "D",
-    "B'": "D'",
-    "B2": "D2",
-
-    "L": "L",
-    "L'": "L'",
-    "L2": "L2",
-
-    "R": "R",
-    "R'": "R'",
-    "R2": "R2",
-
-}
-
-x_prime_mouves_dir = {
     "U": "F",
     "U'": "F'",
     "U2": "F2",
@@ -275,36 +251,63 @@ x_prime_mouves_dir = {
     "R": "R",
     "R'": "R'",
     "R2": "R2",
-
 }
 
+x2_mouves_dir = {
+    "U": "D",
+    "U'": "D'",
+    "U2": "D2",
 
-y_prime_mouve_dir = {
-    "U": "U",
-    "U'": "U'",
-    "U2": "U2",
+    "D": "U",
+    "D'": "U'",
+    "D2": "U2",
 
-    "D": "D",
-    "D'": "D'",
-    "D2": "D2",
+    "F": "B",
+    "F'": "B'",
+    "F2": "B2",
 
-    "F": "L",
-    "F'": "L'",
-    "F2": "L2",
+    "B": "F",
+    "B'": "F'",
+    "B2": "F2",
 
-    "B": "R",
-    "B'": "R'",
-    "B2": "R2",
+    "L": "L",
+    "L'": "L'",
+    "L2": "L2",
 
-    "L": "B",
-    "L'": "B'",
-    "L2": "B2",
-
-    "R": "F",
-    "R'": "F'",
-    "R2": "F2",
-
+    "R": "R",
+    "R'": "R'",
+    "R2": "R2",
 }
+x_prime_mouves_dir = {v: k for k, v in x_mouves_dir.items()}
+
+
+z_mouves_dir = {
+    "U": "L",
+    "U'": "L'",
+    "U2": "L2",
+
+    "D": "R",
+    "D'": "R'",
+    "D2": "R2",
+
+    "F": "F",
+    "F'": "F'",
+    "F2": "F2",
+
+    "B": "B",
+    "B'": "B'",
+    "B2": "B2",
+
+    "L": "D",
+    "L'": "D'",
+    "L2": "D2",
+
+    "R": "U",
+    "R'": "U'",
+    "R2": "U2",
+}
+
+z_prime_mouves_dir = {v: k for k, v in z_mouves_dir.items()}
 
 
 def get_new_idx(idx: tuple, sense: str):
