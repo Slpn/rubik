@@ -63,7 +63,7 @@ def append_y2_prime_mouve(soluce_mouves: list[str], mouve: str):
 
 
 def make_mouve(soluce_mouves: list[str], found_oll: dict, append_func: callable):
-    x, x_prime, z, z_prime, y, y_prime, x2 = False, False, False, False, False, False, False
+    x, x_prime, z, z_prime, y, y_prime, y2, x2 = False, False, False, False, False, False, False, False
 
     print('in make mouves', found_oll)
     for mouve in found_oll['mouves']:
@@ -134,27 +134,38 @@ def make_mouve(soluce_mouves: list[str], found_oll: dict, append_func: callable)
                 else:
                     continue
 
-            case 'y':
+            case 'y' | "d'":
                 if y_prime:
                     y_prime = False
                 else:
                     y = True
 
-                continue
+                if to_append == "d'":
+                    to_append = "U'"
+                else:
+                    continue
 
-            case "y'":
+            case "y'" | "d":
                 if y:
                     y = False
                 else:
                     y_prime = True
 
-                continue
+                if to_append == "d":
+                    to_append = 'U'
+                else:
+                    continue
 
-        print("zzzzz", z)
         if z:
             append_func(soluce_mouves, z_mouves_dir[to_append])
         elif z_prime:
             append_func(soluce_mouves, z_prime_mouves_dir[to_append])
+        elif y:
+            append_func(soluce_mouves, y_mouves_dir[to_append])
+        elif y_prime:
+            append_func(soluce_mouves, y_prime_mouve_dir[to_append])
+        elif y2:
+            append_func(soluce_mouves, y2_mouve_dir[to_append])
         elif x:
             append_func(soluce_mouves, x_mouves_dir[to_append])
         elif x_prime:

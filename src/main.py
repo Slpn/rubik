@@ -68,21 +68,65 @@ def test_mouves(visualiser: RubixVisualiser, rubik: RubiksCube,  stop_event: thr
     print(mouves_sequence)
 
 
-def config_OLL(num: int, rubik: RubiksCube):
+def test_OLL(rubik: RubiksCube):
+    for rotate in [None,  "y'", "y", "y2"]:
+        for i in range(1, 57):
+            print("algooo", i)
+            config_OLL(i, rubik, rotate)
+            mouves = OLL(rubik)
+            apply_mouves(mouves, rubik, None)
+            rubik.pretty_print()
+            if not all(all(item == 'Y' for item in row) for row in rubik.cube['Down'].array):
+                print("algo", i, "not ok")
+                print(mouves)
+                return
+
+
+def config_OLL(num: int, rubik: RubiksCube, rotate: None | str = None):
     algo = list(filter(lambda elem: elem["num"] == num, OLL_algo))[0]
     shema = algo["shema"]
 
-    rubik.cube["Bottom"].array[2] = shema[0][1:4][::-1]
-    rubik.cube["Front"].array[2] = shema[4][1:4]
+    match rotate:
+        case None:
+            bottom = "Bottom"
+            front = "Front"
+            left = "Left"
+            right = "Right"
+        case "y'":
+            bottom = "Right"
+            front = "Left"
+            left = "Bottom"
+            right = "Front"
+        case "y":
+            bottom = "Left"
+            front = "Right"
+            left = "Front"
+            right = "Bottom"
+        case "y2":
+            bottom = "Front"
+            front = "Bottom"
+            left = "Right"
+            right = "Left"
+
+    rubik.cube[bottom].array[2] = shema[0][1:4][::-1]
+    rubik.cube[front].array[2] = shema[4][1:4]
     j = 0
     for i in range(1, 4):
-        rubik.cube["Left"].array[2][j] = shema[i][0]
-        rubik.cube["Right"].array[2][j] = shema[4 - i][4]
+        rubik.cube[left].array[2][j] = shema[i][0]
+        rubik.cube[right].array[2][j] = shema[4 - i][4]
         j += 1
 
-    rubik.cube['Down'].array[2] = shema[1][1:4]
-    rubik.cube['Down'].array[1] = shema[2][1:4]
-    rubik.cube['Down'].array[0] = shema[3][1:4]
+    rubik.cube["Down"].array[2] = shema[1][1:4]
+    rubik.cube["Down"].array[1] = shema[2][1:4]
+    rubik.cube["Down"].array[0] = shema[3][1:4]
+
+    if rotate == "y'":
+        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array)
+    elif rotate == "y":
+        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array, k=-1)
+    elif rotate == "y2":
+        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array, k=-1)
+        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array, k=-1)
 
 
 def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
@@ -129,16 +173,15 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-       # config_OLL(18, rubik)
-        mix_rubiks(sys.argv[1], rubik, visualiser)
-        random_scramble(rubik, visualiser)
-    #    rubik.pretty_print()
+        # mix_rubiks(sys.argv[1], rubik, visualiser)
+        # random_scramble(rubik, visualiser)
+        test_OLL(rubik)
 
-        resolve_rubik_thread = threading.Thread(
-            target=resolve_rubik, args=[rubik, visualiser])
-        resolve_rubik_thread.start()
+        # resolve_rubik_thread = threading.Thread(
+        #     target=resolve_rubik, args=[rubik, visualiser])
+        # resolve_rubik_thread.start()
 
-        launch_vizualiser()
+        # launch_vizualiser()
         sys.exit()
 
       #  thread_test.start()
