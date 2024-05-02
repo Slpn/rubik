@@ -137,11 +137,15 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
     for i in range(200):
         cross_mouves_tmp = resolve_cross(rubik, None)
         F2L_mouves_tmp = F2L(rubik, None)
-        if (mouves == None or (F2L_mouves_tmp != None and cross_mouves_tmp != None and len(cross_mouves_tmp) + len(F2L_mouves_tmp) < len(mouves))):
-            mouves = copy.copy(cross_mouves_tmp)+copy.copy(F2L_mouves_tmp)
+        OLL_mouves = OLL(rubik)
+        if (mouves == None or (F2L_mouves_tmp != None and cross_mouves_tmp != None and len(cross_mouves_tmp) + len(F2L_mouves_tmp) + len(OLL_mouves) < len(mouves))):
+            mouves = copy.copy(cross_mouves_tmp) + \
+                copy.copy(F2L_mouves_tmp) + copy.copy(OLL_mouves)
+
         if F2L_mouves_tmp:
-            print(len(cross_mouves_tmp) + len(F2L_mouves_tmp),
-                  len(cross_mouves_tmp), len(F2L_mouves_tmp))
+            print(len(cross_mouves_tmp) + len(F2L_mouves_tmp) + len(OLL_mouves),
+                  len(cross_mouves_tmp), len(F2L_mouves_tmp), len(OLL_mouves))
+
         rubik.cube = copy.deepcopy(rubik_conf)
 
     print("end", len(mouves))
@@ -149,18 +153,18 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser):
     apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
     time.sleep(3)
 
-    oll_mouves = OLL(rubik)
-    print("oll mouves", oll_mouves)
+    # oll_mouves = OLL(rubik)
+    # print("oll mouves", oll_mouves)
 
-    for mouve in oll_mouves:
-        rubik.soluce_mouves.append(mouve)
+    # for mouve in oll_mouves:
+    #     rubik.soluce_mouves.append(mouve)
 
     clear_mouves(rubik)
 
     print('Final', len(rubik.soluce_mouves))
 
     visualiser.SPEED = 0.02
-    apply_mouves(oll_mouves, rubik, visualiser, True)
+    # apply_mouves(oll_mouves, rubik, visualiser, True)
     rubik.pretty_print()
 
 
@@ -173,13 +177,13 @@ if __name__ == "__main__":
         visualiser = RubixVisualiser()
         rubik = RubiksCube()
 
-        # mix_rubiks(sys.argv[1], rubik, visualiser)
-        # random_scramble(rubik, visualiser)
-        test_OLL(rubik)
+    #    mix_rubiks(sys.argv[1], rubik, visualiser)
+        random_scramble(rubik, visualiser)
+   #     test_OLL(rubik)
 
-        # resolve_rubik_thread = threading.Thread(
-        #     target=resolve_rubik, args=[rubik, visualiser])
-        # resolve_rubik_thread.start()
+        resolve_rubik_thread = threading.Thread(
+            target=resolve_rubik, args=[rubik, visualiser])
+        resolve_rubik_thread.start()
 
         # launch_vizualiser()
         sys.exit()
