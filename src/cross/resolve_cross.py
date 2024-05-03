@@ -188,7 +188,6 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
                 not_placed = is_cross_sorted()
             for idx in cross_idx:
                 if face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(face, idx, rubik):
-                    # time.sleep(5)
                     place_on_cross(face, idx, True)
                     do_break = True
                     break

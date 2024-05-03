@@ -203,13 +203,17 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser | None):
             if len(list(filter(lambda elem: len(white_corner_bad_placed[elem]) > 0, white_corner_bad_placed))):
                 mouves, algo_num = find_mouves(
                     white_corner_bad_placed, rubik)
-                if mouves and (best_mouve["mouves"] == None or len(mouves) + (1 if i > 0 else 0) < best_mouve["cost"] or not best_mouve["resolve_white"]):
-                    best_mouve["mouves"] = copy.copy(mouves)
-                    best_mouve["turn"] = i
-                    best_mouve["algo"] = algo_num
-                    best_mouve["cost"] = len(mouves) + (1 if i > 0 else 0)
-                    best_mouve["resolve_white"] = True
-                    j = 1
+                if mouves and (best_mouve["mouves"] == None or len(mouves) + (1 if i > 0 else 0) <= best_mouve["cost"] or not best_mouve["resolve_white"]):
+                    rand = 0
+                    if len(mouves) + (1 if i > 0 else 0) == best_mouve["cost"]:
+                        random.choice([0, 1])
+                    if rand == 0:
+                        best_mouve["mouves"] = copy.copy(mouves)
+                        best_mouve["turn"] = i
+                        best_mouve["algo"] = algo_num
+                        best_mouve["cost"] = len(mouves) + (1 if i > 0 else 0)
+                        best_mouve["resolve_white"] = True
+                        j = 1
                     while (len(soluce_mouves) >= j and (len(mouves) > 1 and soluce_mouves[-j] == opposite_mouves[mouves[j - 1]]
                            or soluce_mouves[-j] == [mouves[j - 1]])):
                         best_mouve["cost"] -= 1

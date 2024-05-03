@@ -27,9 +27,9 @@ def apply_mouves(mouves: list[str], rubik: RubiksCube, visualiser: RubixVisualis
             time.sleep(visualiser.SPEED)
 
 
-def clear_mouves(rubik: RubiksCube):
-    soluce_mouves = copy.copy(rubik.soluce_mouves)
-    rubik.soluce_mouves = []
+def clear_mouves(mouves: list[str]) -> list[str]:
+    soluce_mouves = copy.copy(mouves)
+    res = []
     i = 0
     while i <= len(soluce_mouves) - 1:
         equal = 1
@@ -54,14 +54,14 @@ def clear_mouves(rubik: RubiksCube):
                     if equal % 4 == 0:
                         pass
                     else:
-                        rubik.soluce_mouves.append(soluce_mouves[i][0] + '2')
+                        res.append(soluce_mouves[i][0] + '2')
                     i += equal
             elif equal % 2 == 1:
                 if soluce_mouves[i][-1] == '2':
-                    rubik.soluce_mouves.append(soluce_mouves[i])
+                    res.append(soluce_mouves[i])
                     i += equal
                 else:
-                    rubik.soluce_mouves.append(
+                    res.append(
                         opposite_mouves[soluce_mouves[i]])
                     i += equal
 
@@ -70,12 +70,16 @@ def clear_mouves(rubik: RubiksCube):
                 pass
                 i += inverse
             elif inverse % 2 == 1:
-                rubik.soluce_mouves.append(soluce_mouves[i])
+                res.append(soluce_mouves[i])
                 i += inverse
 
         else:
-            rubik.soluce_mouves.append(soluce_mouves[i])
+            res.append(soluce_mouves[i])
             i += 1
+
+    i = 1
+
+    return res
 
 
 mouves_dir = {

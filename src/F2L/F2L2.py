@@ -167,7 +167,7 @@ def find_mouves_bis(white_corner_well_placed, rubik: RubiksCube) -> list[str] | 
         if mouves:
             found_mouves.append((mouves, algo_num))
 
-    if len(find_mouves) == 0:
+    if len(found_mouves) == 0:
         for corner_wp in white_corner_well_placed:
             R_face = rubik.cube[get_R_corner_bottom(
                 corner_wp['corner']['index'])]

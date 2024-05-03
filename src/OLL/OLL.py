@@ -30,16 +30,12 @@ def get_down_with_adjacent(rubik: RubiksCube):
 def detect_OLL(rubik: RubiksCube):
     down_array = get_down_with_adjacent(rubik)
     found_oll = None
-    print(down_array)
     for i in range(4):
-        print(i)
         for algo in algos:
             if np.array_equal(down_array, algo['shema']):
-                print("found", algo)
                 found_oll = algo
                 break
         if found_oll:
-            print("fouuudnd")
             break
         down_array = np.rot90(down_array)
 
@@ -65,7 +61,6 @@ def append_y2_prime_mouve(soluce_mouves: list[str], mouve: str):
 def make_mouve(soluce_mouves: list[str], found_oll: dict, append_func: callable):
     x, x_prime, z, z_prime, y, y_prime, y2, x2 = False, False, False, False, False, False, False, False
 
-    print('in make mouves', found_oll)
     for mouve in found_oll['mouves']:
         to_append = mouve
         match to_append:
@@ -85,7 +80,6 @@ def make_mouve(soluce_mouves: list[str], found_oll: dict, append_func: callable)
                 elif to_append == 'M2':
                     append_func(soluce_mouves, "L2")
                     to_append = "R2"
-                    print("M2")
                     x = True
                     x_prime = False
 
@@ -178,7 +172,6 @@ def make_mouve(soluce_mouves: list[str], found_oll: dict, append_func: callable)
 
 def OLL(rubik: RubiksCube):
     found_oll, rotate = detect_OLL(rubik)
-    print("rotate", rotate)
     soluce_mouves = []
     def append_func(): return None
     if (rotate == 0):
