@@ -314,7 +314,7 @@ z_mouves_dir = {
 z_prime_mouves_dir = {v: k for k, v in z_mouves_dir.items()}
 
 
-def get_new_idx(idx: tuple, sense: str):
+def get_new_idx(idx: tuple, sense: str) -> tuple:
     i, j = None, None
     match sense:
         case '+':
@@ -412,3 +412,142 @@ def get_face_to_mouve(from_face: str, index: tuple):
                 else:
                     to_mouve = 'Front' if j == 2 else 'Bottom'
     return to_mouve
+
+
+def append_mouve(soluce_mouves: list[str], mouve: str):
+    soluce_mouves.append(inverse_mouves_dir[mouve])
+
+
+def append_y_mouve(soluce_mouves: list[str], mouve: str):
+    soluce_mouves.append(inverse_mouves_dir[y_mouves_dir[mouve]])
+
+
+def append_y_prime_mouve(soluce_mouves: list[str], mouve: str):
+    soluce_mouves.append(inverse_mouves_dir[y_prime_mouve_dir[mouve]])
+
+
+def append_y2_prime_mouve(soluce_mouves: list[str], mouve: str):
+    soluce_mouves.append(inverse_mouves_dir[y2_mouve_dir[mouve]])
+
+
+def make_algo_mouves(soluce_mouves: list[str], algo_mouves: list[str], append_func: callable):
+    x, x_prime, z, z_prime, y, y_prime, y2, x2 = False, False, False, False, False, False, False, False
+
+    for mouve in algo_mouves:
+        to_append = mouve
+        match to_append:
+            case "M2":
+                append_func(soluce_mouves, "L2")
+                to_append = "R2"
+                if (x_prime):
+                    x_prime = False
+                    x = True
+                elif (x):
+                    x = False
+                    x_prime = True
+                else:
+                    x2 = True
+
+            case "x" | "r" | "l'" | "M'":
+                if x_prime:
+                    x_prime = False
+                else:
+                    x = True
+
+                if to_append == "r":
+                    to_append = "L"
+                elif to_append == "l'":
+                    to_append = "R'"
+                elif to_append == "M'":
+                    append_func(soluce_mouves, "L")
+                    to_append = "R'"
+
+                else:
+                    continue
+
+            case "x'" | "r'" | "l" | 'M':
+                if x:
+                    x = False
+                else:
+                    x_prime = True
+
+                if to_append == "r'":
+                    to_append = "L'"
+                elif to_append == "l":
+                    to_append = "R"
+                elif to_append == 'M':
+                    append_func(soluce_mouves, "L'")
+                    to_append = 'R'
+                else:
+                    continue
+
+            case "z" | "f" | "b'":
+                if z:
+                    z_prime = False
+                else:
+                    z = True
+
+                if to_append == "f":
+                    to_append = "B"
+                elif to_append == "b'":
+                    to_append = "F'"
+                else:
+                    continue
+
+            case "z'" | "f'" | "b":
+                if z:
+                    z = False
+                else:
+                    z_prime = True
+
+                if to_append == "f'":
+                    to_append = "B'"
+                elif to_append == "b":
+                    to_append = "F"
+                else:
+                    continue
+
+            case 'y' | "d'" | "u":
+                if y_prime:
+                    y_prime = False
+                else:
+                    y = True
+
+                if to_append == "d'":
+                    to_append = "U'"
+                elif to_append == "u":
+                    to_append = "D"
+                else:
+                    continue
+
+            case "y'" | "d" | "u'":
+                if y:
+                    y = False
+                else:
+                    y_prime = True
+
+                if to_append == "d":
+                    to_append = 'U'
+                if to_append == "u'":
+                    to_append = "D'"
+                else:
+                    continue
+
+        if z:
+            append_func(soluce_mouves, z_mouves_dir[to_append])
+        elif z_prime:
+            append_func(soluce_mouves, z_prime_mouves_dir[to_append])
+        elif y:
+            append_func(soluce_mouves, y_mouves_dir[to_append])
+        elif y_prime:
+            append_func(soluce_mouves, y_prime_mouve_dir[to_append])
+        elif y2:
+            append_func(soluce_mouves, y2_mouve_dir[to_append])
+        elif x:
+            append_func(soluce_mouves, x_mouves_dir[to_append])
+        elif x_prime:
+            append_func(soluce_mouves, x_prime_mouves_dir[to_append])
+        elif x2:
+            append_func(soluce_mouves, x2_mouves_dir[to_append])
+        else:
+            append_func(soluce_mouves, to_append)

@@ -227,7 +227,7 @@ class Face():
                     res_i, res_j = 0, 2
                 elif i == 2 and j == 2:
                     res_i, res_j = 2, 2
-        if i == None or j == None:
+        if res_i == None or res_j == None:
             raise Exception(
                 f"Face {dir} at index {(i, j)} is not a corner")
 
@@ -323,6 +323,12 @@ class Face():
     #     other.color = self.color
     #     other.dir = self.dir
     #     return other
+
+    def __deepcopy__(self, other):
+        other = Face(self.dir)
+        other.array = copy.deepcopy(self.array)
+        other.color = self.color
+        return other
 
 
 def check_edge_color(face: Face, idx: tuple, rubix) -> bool:

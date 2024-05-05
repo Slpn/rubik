@@ -5,6 +5,7 @@ import threading
 import time
 from F2L.F2L import F2L
 from OLL.OLL import OLL
+from PLL.PLL import PLL
 from cross.resolve_cross import resolve_cross
 from rubik_class import RubiksCube
 from rubik_utils import apply_mouves, clear_mouves
@@ -33,6 +34,7 @@ def mix_rubiks(mouves: str, rubik: RubiksCube, visualiser: RubixVisualiser | Non
         rubik.mouves[mouve]()
         if visualiser:
             visualiser.visualizer_mouves[mouve]()
+    return array_mouves
 
 
 def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser | None = None):
@@ -63,7 +65,7 @@ def test_OLL(rubik: RubiksCube):
             apply_mouves(mouves, rubik, None)
             rubik.pretty_print()
             if not all(all(item == 'Y' for item in row) for row in rubik.cube['Down'].array):
-                print("algo", i, "not ok")
+                print("algo", i, "rotate", rotate, "not ok")
                 print(mouves)
                 return
 
@@ -143,8 +145,12 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None):
 
     print("end", len(mouves))
     rubik.soluce_mouves = clear_mouves(mouves)
-    apply_mouves(rubik.soluce_mouves, rubik, None, False)
 
+    apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
+
+    pll_mouves = PLL(rubik)
+    visualiser.SPEED = 0.02
+    apply_mouves(pll_mouves, rubik, visualiser, True)
     print('Final', len(rubik.soluce_mouves))
     rubik.pretty_print()
 
@@ -157,11 +163,19 @@ if __name__ == "__main__":
 
         rubik = RubiksCube()
 
-        # mix = mix_rubiks(sys.argv[1], rubik)
-        mix = random_scramble(rubik)
+        # test_OLL(rubik)
+        # sys.exit()
+        mix = mix_rubiks(sys.argv[1], rubik)
+       # mix = random_scramble(rubik)
 
-        resolve_rubik(rubik)
-       # sys.exit()
+        visualiser = RubixVisualiser()
+        mouve_visualiser(mix, visualiser, 0.0)
+        thread_resolve = threading.Thread(
+            target=resolve_rubik, args=[rubik, visualiser])
+        thread_resolve.start()
+        # resolve_rubik(rubik)
+        launch_vizualiser()
+        sys.exit()
 
         visualiser = RubixVisualiser()
         mouve_visualiser(mix, visualiser, 0.0)
@@ -177,5 +191,5 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         visualiser.close()
-        print("Canceled")
-        sys.exit()
++ print("Canceled")
+sys.exit()
