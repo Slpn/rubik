@@ -121,36 +121,46 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None):
 
     rubik_conf = copy.deepcopy(rubik.cube)
     mouves: list | None = None
-    for _ in range(100):
+    final_pll, final_rot_pll = None, None
+    for _ in range(200):
         cross_mouves = resolve_cross(rubik, None)
 
         rubik_white_ok_cpy = copy.deepcopy(rubik.cube)
 
         F2L_mouves = None
         mouves2 = None
-        for _ in range(10):
-            F2L_mouves_tmp = F2L(rubik, None)
+        pll_num, rotte_pll = None, None
+        for _ in range(5):
+            pll_num_tmp, pll_rotate_tmp = None, None
+            F2L_mouves = F2L(rubik, None)
+            if F2L_mouves == None:
+                continue
             OLL_mouves = OLL(rubik)
-            clear_concat = clear_mouves(F2L_mouves_tmp + OLL_mouves)
-            if (F2L_mouves_tmp and (mouves2 == None or len(clear_concat) < len(mouves2))):
+            apply_mouves(OLL_mouves, rubik, None, False)
+            PLL_mouves, pll_num_tmp, pll_rotate_tmp = PLL(rubik)
+
+            clear_concat = clear_mouves(F2L_mouves + OLL_mouves + PLL_mouves)
+            if (mouves2 == None or len(clear_concat) < len(mouves2)):
                 mouves2 = clear_concat
+                pll_num = pll_num_tmp
+                rotte_pll = pll_rotate_tmp
             rubik.cube = copy.deepcopy(rubik_white_ok_cpy)
 
-        apply_mouves(mouves2, rubik, None, False)
+        if mouves2:
+            apply_mouves(mouves2, rubik, None, False)
         clear_concat = clear_mouves(cross_mouves + mouves2)
         if (mouves == None or (mouves2 != None and cross_mouves != None and len(clear_concat) < len(mouves))):
             mouves = clear_concat
+            final_pll = pll_num
+            final_rot_pll = rotte_pll
 
         rubik.cube = copy.deepcopy(rubik_conf)
 
-    print("end", len(mouves))
+    print("end", len(mouves), "final pll", final_pll, final_rot_pll)
     rubik.soluce_mouves = clear_mouves(mouves)
 
     apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
 
-    pll_mouves = PLL(rubik)
-    visualiser.SPEED = 0.02
-    apply_mouves(pll_mouves, rubik, visualiser, True)
     print('Final', len(rubik.soluce_mouves))
     rubik.pretty_print()
 
@@ -165,17 +175,10 @@ if __name__ == "__main__":
 
         # test_OLL(rubik)
         # sys.exit()
-        mix = mix_rubiks(sys.argv[1], rubik)
-       # mix = random_scramble(rubik)
-
-        visualiser = RubixVisualiser()
-        mouve_visualiser(mix, visualiser, 0.0)
-        thread_resolve = threading.Thread(
-            target=resolve_rubik, args=[rubik, visualiser])
-        thread_resolve.start()
-        # resolve_rubik(rubik)
-        launch_vizualiser()
-        sys.exit()
+       # mix = mix_rubiks(sys.argv[1], rubik)
+        mix = random_scramble(rubik)
+        resolve_rubik(rubik, None)
+        sys.exit(rubik.soluce_mouves)
 
         visualiser = RubixVisualiser()
         mouve_visualiser(mix, visualiser, 0.0)

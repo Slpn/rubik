@@ -445,6 +445,8 @@ def make_algo_mouves(soluce_mouves: list[str], algo_mouves: list[str], append_fu
                 elif (x):
                     x = False
                     x_prime = True
+                elif x2:
+                    x2 = False
                 else:
                     x2 = True
 
@@ -510,6 +512,12 @@ def make_algo_mouves(soluce_mouves: list[str], algo_mouves: list[str], append_fu
             case 'y' | "d'" | "u":
                 if y_prime:
                     y_prime = False
+                elif y:
+                    y = False
+                    y2 = True
+                elif y2:
+                    y2 = False
+                    y_prime = True
                 else:
                     y = True
 
@@ -523,6 +531,12 @@ def make_algo_mouves(soluce_mouves: list[str], algo_mouves: list[str], append_fu
             case "y'" | "d" | "u'":
                 if y:
                     y = False
+                elif y_prime:
+                    y_prime = False
+                    y2 = True
+                elif y2:
+                    y2 = False
+                    y = True
                 else:
                     y_prime = True
 

@@ -12,7 +12,6 @@ from rubik_utils import inverse_mouves_dir, \
 def detect_PLL(rubik: RubiksCube):
     face = rubik.cube["Down"]
     for rotate in range(4):
-        print("rotate", rotate)
         for algo in algos:
             found = True
             corners = algo["shema"]["coins"]
@@ -41,12 +40,10 @@ def detect_PLL(rubik: RubiksCube):
                         and corner1["corner_j"]["color"] == corner2["corner_j"]["face"].color)
                         or (corner1["corner_j"]["color"] == corner2["corner_i"]["face"].color
                         and corner1["corner_i"]["color"] == corner2["corner_j"]["face"].color)):
-                    print("corner not ok")
                     found = False
                     break
             if found:
                 for edge in edges:
-
                     coor1, coor2 = None, None
                     match rotate:
                         case 0:
@@ -64,9 +61,7 @@ def detect_PLL(rubik: RubiksCube):
 
                     edge1 = face.get_edge(coor1, rubik)
                     edge2 = face.get_edge(coor2, rubik)
-                    print("e2", edge2)
                     if edge1["color"] != edge2["face"].color:
-                        print("egde not ok")
                         found = False
                         break
 
@@ -77,21 +72,21 @@ def detect_PLL(rubik: RubiksCube):
 
 
 def PLL(rubik: RubiksCube):
-    found_pll, rotate = None, None
+    found_pll, rotate, rot = None, None, 0
     soluce_mouves = []
-    i = 0
-    while (found_pll == None):
+    rot = 0
+    while found_pll == None:
         found_pll, rotate = detect_PLL(rubik)
         if (found_pll):
             break
-        i += 1
         rubik.mouves['D']()
+        rot += 1
 
-    if i == 1:
+    if rot == 1:
         soluce_mouves.append('D')
-    elif i == 2:
+    elif rot == 2:
         soluce_mouves.append('D2')
-    elif i == 3:
+    elif rot == 3:
         soluce_mouves.append("D'")
 
     def append_func(): return None
@@ -106,4 +101,4 @@ def PLL(rubik: RubiksCube):
 
     make_algo_mouves(soluce_mouves, found_pll["mouves"], append_func)
 
-    return soluce_mouves
+    return soluce_mouves, found_pll["num"], rotate
