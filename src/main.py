@@ -18,10 +18,11 @@ from OLL.OLL_algos import algos as OLL_algo
 
 
 def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: float, auto_visualise=True):
-    time.sleep(1)
+    time.sleep(2)
     print(ord('y'))
     visualiser.SPEED = speed
     for mouve in mouves:
+        print(mouve)
         user_continue = " "
         while (not auto_visualise and ord(user_continue) != 97):
             user_continue = input("Tapez y pour le prochain mouv: ")
@@ -60,7 +61,7 @@ def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser | None = None
     return mouves_sequence
 
 
-def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None, explored_cross: set = None, max_iter=600, stop_50=False):
+def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None, explored_cross: set = None, max_iter=400, stop_50=False):
 
     rubik_conf = copy.deepcopy(rubik.cube)
     mouves: list | None = None
@@ -172,13 +173,13 @@ if __name__ == "__main__":
 
         rubik = RubiksCube()
 
-        generate, generated_lenght, visualise, visualise_mix, auto_visualise = get_options(
+        generate, generated_lenght, visualise, visualise_mix, auto_visualise, count = get_options(
             sys.argv)
 
         if generate:
             mix = random_scramble(rubik, None, generated_lenght)
         else:
-            mix = mix_rubiks(sys.argv[2 if visualise else 1], rubik, None)
+            mix = mix_rubiks(sys.argv[count + 1], rubik, None)
 
         resolve_rubik(rubik, None)
 

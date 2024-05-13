@@ -2,7 +2,7 @@ import subprocess
 import time
 from tqdm import tqdm
 
-SCRIPT = "python src/main.py 'U'"
+SCRIPT = "python src/main.py --generate 15"
 ITER = 200
 
 

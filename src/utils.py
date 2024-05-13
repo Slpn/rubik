@@ -128,31 +128,33 @@ def get_options(argv: list[str]):
     generate, generated_lenght, visualise, visualise_mix, visualise_speed, auto_visualise = None, None, None, None, None, None
     count = 0
     i = 1
-    while (i < 3) and i < lenght:
+    while (i < 4) and i < lenght:
         if argv[i][0:2] == '--':
             if argv[i] == '--visualise':
                 visualise = True
-            if argv[i] == '--generate':
+                count += 1
+            elif argv[i] == '--generate':
                 generate = True
-                if argv[i + 1]:
+                count += 2
+                try:
+                    generated_lenght = int(argv[i + 1])
+                    i += 1
+                except:
+                    raise Exception("The lenght of generated mouves must be an int --generate [lenght]")
             else:
                 raise Exception('Invalid option')
         i += 1
 
-    if lenght == 2 + (1 if visualise else 0):
-        generate = False
-    elif lenght == 1 + (1 if visualise else 0):
-        generate = True
-    else:
-        raise AssertionError("Bad number of argument")
+    if not generate and lenght < 2 + count:
+        raise Exception('Please provide mixing array or use the --generate option for a random mix.')
 
-    if generate:
-        generated_lenght = curses.wrapper(
-            lambda stdscr: choice_option(stdscr, ["Yes", "False"], "Enter the lenght of the mix", input=True))
-        try:
-            generated_lenght = int(generated_lenght)
-        except:
-            raise Exception("Lenght of mix must be an integer")
+#    if generate:
+#        generated_lenght = curses.wrapper(
+#            lambda stdscr: choice_option(stdscr, ["Yes", "False"], "Enter the lenght of the mix", input=True))
+#        try:
+#            generated_lenght = int(generated_lenght)
+#        except:
+#            raise Exception("Lenght of mix must be an integer")
 
     if visualise:
         visualise_mix = curses.wrapper(
@@ -162,4 +164,4 @@ def get_options(argv: list[str]):
             lambda stdscr: choice_option(stdscr, ["Yes", "False"], "Run auto mouves ? "))
         auto_visualise = auto_visualise == "Yes"
 
-    return generate, generated_lenght, visualise, visualise_mix, auto_visualise
+    return generate, generated_lenght, visualise, visualise_mix, auto_visualise, count
