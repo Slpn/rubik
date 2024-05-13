@@ -1,7 +1,7 @@
 import copy
 from rubik_class import RubiksCube
 from PLL.PLL_algo import algos
-from rubik_utils import get_new_idx, inverse_mouves_dir, make_algo_mouves
+from rubik_utils import apply_mouves, get_new_idx, inverse_mouves_dir, make_algo_mouves
 from rubik_utils import inverse_mouves_dir, \
     x_mouves_dir, x_prime_mouves_dir, \
     y_mouves_dir, y_prime_mouve_dir, y2_mouve_dir, \
@@ -72,11 +72,14 @@ def detect_PLL(rubik: RubiksCube):
 
 
 def PLL(rubik: RubiksCube):
+    rubik_copy = copy.deepcopy(rubik.cube)
     found_pll, rotate, rot = None, None, 0
     soluce_mouves = []
     rot = 0
     while found_pll == None:
         found_pll, rotate = detect_PLL(rubik)
+       # print('found pll', found_pll)
+     #   rubik.pretty_print()
         if (found_pll):
             break
         rubik.mouves['D']()
@@ -100,5 +103,6 @@ def PLL(rubik: RubiksCube):
         append_func = append_y2_prime_mouve
 
     make_algo_mouves(soluce_mouves, found_pll["mouves"], append_func)
-
-    return soluce_mouves, found_pll["num"], rotate
+    rubik.cube = copy.deepcopy(rubik_copy)
+    apply_mouves(soluce_mouves, rubik, None, False)
+    return soluce_mouves

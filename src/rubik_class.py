@@ -162,12 +162,66 @@ class RubiksCube:
                 self.cube['Bottom'].array[2] = temp_right
                 self.cube['Front'].array[2] = temp_left
 
+    def get_conf_from_str(self, str_conf: str) -> dict[Faces_Dir, Face]:
+        split_conf = str_conf.split()
+        i = 0
+        for face in self.cube:
+            array = []
+            array.append(split_conf[i: i + 3])
+            array.append(split_conf[i + 3: i + 6])
+            array.append(split_conf[i + 6: i + 9])
+            self.cube[face].array = np.array(array)
+            i += 9
+
+    def get_cube_array(self) -> list:
+        array = []
+        for face in self.cube:
+            array.append(self.cube[face].array)
+        return array
+
+    def check_cross(self):
+        cross_idx = [(0, 1), (1, 2), (2, 1), (1, 0)]
+        for idx in cross_idx:
+            if self.cube['Up'][(idx)] != 'W':
+                return False
+
+        for dir in ['Front', 'Left', 'Bottom', 'Right']:
+            for i in range(0, 2):
+                if self.cube[dir].array[i][1] != self.cube[dir].color:
+                    return False
+
+        return True
+
     def check_solved(self):
         for face in self.cube:
-            for row in self.cube[face]:
+            for row in self.cube[face].array:
                 for color in row:
-                    if color != row[0]:
+                    if color != self.cube[face].color:
                         return False
+        return True
+
+    def check_F2L(self):
+        for row in self.cube['Up'].array:
+            for color in row:
+                if color != 'W':
+                    return False
+
+        for dir in ['Front', 'Left', 'Bottom', 'Right']:
+            for i in range(0, 2):
+                for color in self.cube[dir].array[i]:
+                    if color != self.cube[dir].color:
+                        return False
+
+        return True
+
+    def check_OLL(self):
+        if not self.check_F2L():
+            return False
+        for row in self.cube['Down'].array:
+            for color in row:
+                if color != self.cube["Down"].color:
+                    return False
+
         return True
 
     def pretty_print(self):

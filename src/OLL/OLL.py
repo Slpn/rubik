@@ -3,7 +3,7 @@
 from rubik_class import RubiksCube
 import numpy as np
 from OLL.OLL_algos import algos
-from rubik_utils import make_algo_mouves, append_mouve, append_y2_prime_mouve, append_y_mouve, append_y_prime_mouve
+from rubik_utils import apply_mouves, make_algo_mouves, append_mouve, append_y2_prime_mouve, append_y_mouve, append_y_prime_mouve
 
 
 def get_down_with_adjacent(rubik: RubiksCube):
@@ -53,5 +53,5 @@ def OLL(rubik: RubiksCube):
         append_func = append_y2_prime_mouve
 
     make_algo_mouves(soluce_mouves, found_oll["mouves"], append_func)
-
+    apply_mouves(soluce_mouves, rubik, None, False)
     return soluce_mouves

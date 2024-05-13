@@ -1,5 +1,6 @@
 import copy
 import time
+from face_class import Face, Faces_Dir
 from rubik_class import RubiksCube
 from vizualize import RubixVisualiser
 
@@ -28,6 +29,8 @@ def apply_mouves(mouves: list[str], rubik: RubiksCube, visualiser: RubixVisualis
 
 
 def clear_mouves(mouves: list[str]) -> list[str]:
+    if mouves == None:
+        return None
     soluce_mouves = copy.copy(mouves)
     res = []
     i = 0

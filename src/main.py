@@ -1,24 +1,30 @@
 import copy
+import curses
+import heapq
 import random
 import sys
 import threading
 import time
-from F2L.F2L import F2L
+from F2L.F2L5 import F2L
 from OLL.OLL import OLL
 from PLL.PLL import PLL
 from cross.resolve_cross import resolve_cross
 from rubik_class import RubiksCube
 from rubik_utils import apply_mouves, clear_mouves
+from utils import get_options
 from vizualize import RubixVisualiser, launch_vizualiser
 import numpy as np
 from OLL.OLL_algos import algos as OLL_algo
 
 
-def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: float):
+def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: float, auto_visualise=True):
     time.sleep(1)
+    print(ord('y'))
     visualiser.SPEED = speed
-    print(mouves)
     for mouve in mouves:
+        user_continue = " "
+        while (not auto_visualise and ord(user_continue) != 97):
+            user_continue = input("Tapez y pour le prochain mouv: ")
         visualiser.visualizer_mouves[mouve]()
         time.sleep(visualiser.SPEED)
 
@@ -37,13 +43,13 @@ def mix_rubiks(mouves: str, rubik: RubiksCube, visualiser: RubixVisualiser | Non
     return array_mouves
 
 
-def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser | None = None):
+def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser | None = None, mouves=20):
     test_mouves = list(rubik.mouves.keys())
 
     if visualiser:
         visualiser.SPEED = 0.02
     mouves_sequence = []
-    for _ in range(0, 20):
+    for _ in range(0, mouves):
         mouve = random.choice(test_mouves)
         rubik.mouves[mouve]()
         mouves_sequence.append(mouve)
@@ -51,148 +57,153 @@ def random_scramble(rubik: RubiksCube, visualiser: RubixVisualiser | None = None
             visualiser.visualizer_mouves[mouve]()
             time.sleep(visualiser.SPEED)
 
-    mix = ' '.join(mouves_sequence)
-    print(mix)
     return mouves_sequence
 
 
-def test_OLL(rubik: RubiksCube):
-    for rotate in [None,  "y'", "y", "y2"]:
-        for i in range(1, 57):
-            print("algooo", i)
-            config_OLL(i, rubik, rotate)
-            mouves = OLL(rubik)
-            apply_mouves(mouves, rubik, None)
-            rubik.pretty_print()
-            if not all(all(item == 'Y' for item in row) for row in rubik.cube['Down'].array):
-                print("algo", i, "rotate", rotate, "not ok")
-                print(mouves)
-                return
-
-
-def config_OLL(num: int, rubik: RubiksCube, rotate: None | str = None):
-    algo = list(filter(lambda elem: elem["num"] == num, OLL_algo))[0]
-    shema = algo["shema"]
-
-    match rotate:
-        case None:
-            bottom = "Bottom"
-            front = "Front"
-            left = "Left"
-            right = "Right"
-        case "y'":
-            bottom = "Right"
-            front = "Left"
-            left = "Bottom"
-            right = "Front"
-        case "y":
-            bottom = "Left"
-            front = "Right"
-            left = "Front"
-            right = "Bottom"
-        case "y2":
-            bottom = "Front"
-            front = "Bottom"
-            left = "Right"
-            right = "Left"
-
-    rubik.cube[bottom].array[2] = shema[0][1:4][::-1]
-    rubik.cube[front].array[2] = shema[4][1:4]
-    j = 0
-    for i in range(1, 4):
-        rubik.cube[left].array[2][j] = shema[i][0]
-        rubik.cube[right].array[2][j] = shema[4 - i][4]
-        j += 1
-
-    rubik.cube["Down"].array[2] = shema[1][1:4]
-    rubik.cube["Down"].array[1] = shema[2][1:4]
-    rubik.cube["Down"].array[0] = shema[3][1:4]
-
-    if rotate == "y'":
-        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array)
-    elif rotate == "y":
-        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array, k=-1)
-    elif rotate == "y2":
-        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array, k=-1)
-        rubik.cube["Down"].array = np.rot90(rubik.cube["Down"].array, k=-1)
-
-
-def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None):
+def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None, explored_cross: set = None, max_iter=600, stop_50=False):
 
     rubik_conf = copy.deepcopy(rubik.cube)
     mouves: list | None = None
-    final_pll, final_rot_pll = None, None
-    for _ in range(200):
-        cross_mouves = resolve_cross(rubik, None)
+    i = 0
 
-        rubik_white_ok_cpy = copy.deepcopy(rubik.cube)
+    mouves = None
 
-        F2L_mouves = None
-        mouves2 = None
-        pll_num, rotte_pll = None, None
-        for _ in range(5):
-            pll_num_tmp, pll_rotate_tmp = None, None
-            F2L_mouves = F2L(rubik, None)
-            if F2L_mouves == None:
+    if (explored_cross == None):
+        explored_cross = set()
+
+    i = 0
+
+    cross_mouves = None
+    cross_conf = None
+
+    while (mouves == None or i < max_iter):
+        if stop_50 and mouves and len(mouves) < 50:
+            break
+
+        cross_mouves_tmp = clear_mouves(
+            resolve_cross(rubik, None))
+        if (cross_mouves_tmp == None):
+            rubik.cube = copy.deepcopy(rubik_conf)
+            i += 1
+            continue
+
+        conf = " ".join((np.array(rubik.get_cube_array())).flatten())
+        if conf == cross_conf and len(cross_mouves_tmp) < len(cross_mouves):
+            cross_mouves = cross_mouves_tmp
+
+        explored = next(
+            (element for element in explored_cross if element[1] == conf), None)
+        if explored:
+            rubik.cube = copy.deepcopy(rubik_conf)
+            i += 1
+            continue
+        else:
+            explored_cross.add(tuple((" ".join(cross_mouves_tmp), conf)))
+
+        cross_ok = copy.deepcopy(rubik.cube)
+        closed_set_F2L = set()
+        open_set_F2L:  heapq = []
+        for _ in range(25):
+
+            F2L_mouves = F2L(rubik, open_set_F2L, closed_set_F2L, None)
+            if (F2L_mouves == None):
+                rubik.cube = copy.deepcopy(cross_ok)
+                i += 1
                 continue
+            if not rubik.check_F2L():
+                raise Exception("F2L not OK")
+
             OLL_mouves = OLL(rubik)
-            apply_mouves(OLL_mouves, rubik, None, False)
-            PLL_mouves, pll_num_tmp, pll_rotate_tmp = PLL(rubik)
+            if not rubik.check_OLL():
+                raise Exception("OLL not OK")
 
-            clear_concat = clear_mouves(F2L_mouves + OLL_mouves + PLL_mouves)
-            if (mouves2 == None or len(clear_concat) < len(mouves2)):
-                mouves2 = clear_concat
-                pll_num = pll_num_tmp
-                rotte_pll = pll_rotate_tmp
-            rubik.cube = copy.deepcopy(rubik_white_ok_cpy)
+            PLL_mouves = PLL(rubik)
+            if not rubik.check_solved():
+                rubik.pretty_print()
+                raise Exception("PLL not OK")
 
-        if mouves2:
-            apply_mouves(mouves2, rubik, None, False)
-        clear_concat = clear_mouves(cross_mouves + mouves2)
-        if (mouves == None or (mouves2 != None and cross_mouves != None and len(clear_concat) < len(mouves))):
-            mouves = clear_concat
-            final_pll = pll_num
-            final_rot_pll = rotte_pll
+            clear_concat = clear_mouves(
+                F2L_mouves + OLL_mouves + PLL_mouves)
+            mouves_tmp = copy.copy(clear_mouves(
+                cross_mouves_tmp + clear_concat))
+            if mouves == None or len(mouves_tmp) < len(mouves):
+                cross_mouves = cross_mouves_tmp
+                cross_conf = conf
+                mouves = mouves_tmp
+            if stop_50 and mouves and len(mouves) < 50:
+                break
+
+            rubik.cube = copy.deepcopy(cross_ok)
+            i += 1
 
         rubik.cube = copy.deepcopy(rubik_conf)
 
-    print("end", len(mouves), "final pll", final_pll, final_rot_pll)
-    rubik.soluce_mouves = clear_mouves(mouves)
+        i += 1
 
-    apply_mouves(rubik.soluce_mouves, rubik, visualiser, False)
+   # rubik.pretty_print()
+    if stop_50:
+        return mouves
+    rubik.soluce_mouves = mouves
+    j = 0
+    explored_rand = set()
+    while len(rubik.soluce_mouves) > 50 and j < 15:
+        rand_mouves = random_scramble(rubik, None, 2)
+        if ' '.join(rand_mouves) in explored_rand:
+            rubik.cube = copy.deepcopy(rubik_conf)
+            j += 1
+            continue
+        explored_rand.add(' '.join(rand_mouves))
 
-    print('Final', len(rubik.soluce_mouves))
-    rubik.pretty_print()
+        new_mouves = rand_mouves + \
+            resolve_rubik(rubik, visualiser, None, 20, stop_50=True)
+        if len(new_mouves) < len(rubik.soluce_mouves):
+            rubik.soluce_mouves = new_mouves
+        rubik.cube = copy.deepcopy(rubik_conf)
+        j += 1
+
+    apply_mouves(rubik.soluce_mouves, rubik, None, False)
+
+    return rubik.soluce_mouves
 
 
 if __name__ == "__main__":
-
+    global mix
     try:
-        if len(sys.argv) != 2:
-            raise AssertionError("Bad number of arguments")
 
         rubik = RubiksCube()
 
-        # test_OLL(rubik)
-        # sys.exit()
-       # mix = mix_rubiks(sys.argv[1], rubik)
-        mix = random_scramble(rubik)
+        generate, generated_lenght, visualise, visualise_mix, auto_visualise = get_options(
+            sys.argv)
+
+        if generate:
+            mix = random_scramble(rubik, None, generated_lenght)
+        else:
+            mix = mix_rubiks(sys.argv[2 if visualise else 1], rubik, None)
+
         resolve_rubik(rubik, None)
-        sys.exit(rubik.soluce_mouves)
 
-        visualiser = RubixVisualiser()
-        mouve_visualiser(mix, visualiser, 0.0)
+        if (not rubik.check_solved()):
+            raise Exception('The rubik is not solved')
+        print(' '.join(rubik.soluce_mouves))
 
-        thread_visualiser = threading.Thread(
-            target=mouve_visualiser, args=[rubik.soluce_mouves, visualiser, 0.04])
-        thread_visualiser.start()
-        launch_vizualiser()
+        if visualise:
+            visualiser = RubixVisualiser()
+            mouve_visualiser(
+                mix, visualiser,  0.0 if not visualise_mix else 0.04, auto_visualise)
+
+            thread_visualiser = threading.Thread(
+                target=mouve_visualiser, args=[rubik.soluce_mouves, visualiser, 0.04, auto_visualise])
+            thread_visualiser.start()
+            launch_vizualiser()
+
+        sys.exit(0)
 
     except Exception as e:
         print("Error:", e)
+    #    sys.exit(-2)
         raise (e)
 
     except KeyboardInterrupt:
         visualiser.close()
-+ print("Canceled")
+        print("Canceled")
 sys.exit()

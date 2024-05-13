@@ -10,8 +10,8 @@ from rubik_utils import get_face_to_mouve, mouves_dir, get_new_idx, inverse_mouv
 from vizualize import RubixVisualiser
 
 
-def find_mouves(white_corner_bad_placed, rubik: RubiksCube) -> list[str] | None:
-    best_mouve, mouves, algo_num, best_algo = None, None, None, None
+def find_mouves(white_corner_bad_placed, rubik: RubiksCube) -> list[str]:
+    mouves, algo_num = None, None
     found_mouves = []
     for corner in white_corner_bad_placed:
         for cube in white_corner_bad_placed[corner]:
@@ -140,12 +140,9 @@ def find_mouves(white_corner_bad_placed, rubik: RubiksCube) -> list[str] | None:
                             elif (cube["corner"]["index"][1] == 2):
                                 mouves, algo_num = algo.forty_one(cube)
 
-            # if (mouves and (best_mouve == None or len(mouves) < len(best_mouve))):
-            #     best_mouve = copy.copy(mouves)
-            #     best_algo = algo_num
             if (mouves):
                 found_mouves.append((mouves, algo_num))
-    # return best_mouve, best_algo
+
     return found_mouves
 
 
@@ -191,57 +188,67 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser | None):
     white_corner_bad_placed = {face: [corner for corner in all_corner[face]
                                       if corner['corner']['color'] == 'W' and not is_final_pos(corner)]for face in all_corner}
     replaced_edges = []
-    edges_bad_placed = [1 for face in faces if face.dir != "Up" and face.dir != "Down" if not is_final_pos_edge(
-        face, rubik.cube[face.dir].get_edge((1, 0), rubik))]
-    while not rubik.check_F2L():
 
-        if (len(soluce_mouves) > 60):
+    while not rubik.check_F2L():
+        if (len(soluce_mouves) > 50):
             return None
-        best_mouve = {
-            "mouves": None,
-            "turn": None,
-            "cost": None,
-            "algo": None,
-            "resolve_white": None
-        }
+        best_mouve = None
+        found_mouves = []
         for i in range(4):
             if len(list(filter(lambda elem: len(white_corner_bad_placed[elem]) > 0, white_corner_bad_placed))):
-                found_mouves = find_mouves(
+                found_mouves_mouves = find_mouves(
                     white_corner_bad_placed, rubik)
-                if len(found_mouves):
-                    chosen_mouve = random.choice(found_mouves)
-                    mouves = chosen_mouve[0]
-                    algo_num = chosen_mouve[1]
-                    best_mouve["mouves"] = copy.copy(mouves)
-                    best_mouve["turn"] = i
-                    best_mouve["algo"] = algo_num
-                    best_mouve["cost"] = len(mouves) + (1 if i > 0 else 0)
-                    best_mouve["resolve_white"] = True
-                    break
 
-            if best_mouve["mouves"] == None or best_mouve["algo"] == 38:
-                white_corner_well_placed = [corner for corner in all_corner['Up']
-                                            if corner['corner']['color'] == 'W' and is_final_pos(corner)]
-                found_mouves = find_mouves_bis(
-                    white_corner_well_placed, rubik)
-                if len(found_mouves):
-                    chosen_mouve = random.choice(found_mouves)
-                    mouves = chosen_mouve[0]
-                    algo_num = chosen_mouve[1]
-                    best_mouve["mouves"] = copy.copy(mouves)
-                    best_mouve["turn"] = i
-                    best_mouve["algo"] = algo_num
-                    best_mouve["cost"] = len(mouves) + (1 if i > 0 else 0)
-                    break
+                if len(found_mouves_mouves):
+                    for mouve in found_mouves_mouves:
+                        mouves = mouve[0]
+                        algo_num = mouve[1]
+                        to_append = {
+                            "mouves": copy.copy(mouves),
+                            "turn": i,
+                            "algo": algo_num,
+                            "cost": len(mouves) + (1 if i > 0 else 0),
+                            "resolve_white": True
+                        }
+                        found_mouves.append(to_append)
 
+            white_corner_well_placed = [corner for corner in all_corner['Up']
+                                        if corner['corner']['color'] == 'W' and is_final_pos(corner)]
+            found_mouves_mouves = find_mouves_bis(
+                white_corner_well_placed, rubik)
+            if len(found_mouves_mouves):
+                for mouve in found_mouves_mouves:
+                    mouves = mouve[0]
+                    algo_num = mouve[1]
+                    to_append = {
+                        "mouves": copy.copy(mouves),
+                        "turn": i,
+                        "algo": algo_num,
+                        "cost": len(mouves) + (1 if i > 0 else 0),
+                        "resolve_white": False
+                    }
+                    found_mouves.append(to_append)
             mouve_F2L(soluce_mouves, ['U'], rubik, visualiser)
             all_corner = {face.dir: [face.get_corners(
                 index, rubik) for index in corner_index] for face in faces}
             white_corner_bad_placed = {face: [corner for corner in all_corner[face]
                                               if corner['corner']['color'] == 'W' and not is_final_pos(corner)]for face in all_corner}
 
-        if (best_mouve["mouves"]):
+        for i in range(len(soluce_mouves) - 1, len(soluce_mouves) - 4 - 1, -1):
+            soluce_mouves.pop(i)
+
+        if len(found_mouves):
+            best_mouve = random.choice(found_mouves)
+            # while (best_mouve["resolve_white"] == False and len(list(filter(lambda elem: elem["resolve_white"] == True, found_mouves)))):
+            #     best_mouve = random.choice(found_mouves)
+
             replaced_edges = []
+            if (best_mouve["turn"] == 1):
+                mouve_F2L(soluce_mouves, ['U'], rubik, visualiser)
+            elif (best_mouve["turn"] == 2):
+                mouve_F2L(soluce_mouves, ['U2'], rubik, visualiser)
+            elif (best_mouve["turn"] == 3):
+                mouve_F2L(soluce_mouves, ["U'"], rubik, visualiser)
             mouve_F2L(soluce_mouves, best_mouve["mouves"], rubik, visualiser)
 
         else:
@@ -260,32 +267,32 @@ def F2L(rubik: RubiksCube, visualiser: RubixVisualiser | None):
     return soluce_mouves
 
 
-def place_edges(soluce_mouves: list[str], mid_edges: dict[str, Edge], rubik: RubiksCube, visualiser: RubixVisualiser | None):
-    for face in mid_edges:
-        if rubik.cube[face][(1, 0)] == mid_edges[face]["face"].color\
-                and mid_edges[face]["color"] == rubik.cube[face].color:
-            mouves = algo.thirty_eight(face)
-            mouve_F2L(soluce_mouves, mouves, rubik, visualiser)
-            return True
+# def place_edges(soluce_mouves: list[str], mid_edges: dict[str, Edge], rubik: RubiksCube, visualiser: RubixVisualiser | None):
+#     for face in mid_edges:
+#         if rubik.cube[face][(1, 0)] == mid_edges[face]["face"].color\
+#                 and mid_edges[face]["color"] == rubik.cube[face].color:
+#             mouves = algo.thirty_eight(face)
+#             mouve_F2L(soluce_mouves, mouves, rubik, visualiser)
+#             return True
 
-    mouves = []
-    top_edges = {face: [rubik.cube[face].get_edge((2, 1), rubik)]
-                 for face in ["Front", "Left", "Bottom", "Right"]}
+#     mouves = []
+#     top_edges = {face: [rubik.cube[face].get_edge((2, 1), rubik)]
+#                  for face in ["Front", "Left", "Bottom", "Right"]}
 
-    for face_dir in top_edges:
-        for edge in top_edges[face_dir]:
-            if corner := is_left_edge_well_placed(face_dir, edge, rubik):
-                mouves, algo_num = algo.twenty_six(corner)
-                break
-            if corner := is_right_edge_well_placed(face_dir, edge, rubik):
-                mouves, algo_num = algo.twenty_five(corner)
-                break
+#     for face_dir in top_edges:
+#         for edge in top_edges[face_dir]:
+#             if corner := is_left_edge_well_placed(face_dir, edge, rubik):
+#                 mouves, algo_num = algo.twenty_six(corner)
+#                 break
+#             if corner := is_right_edge_well_placed(face_dir, edge, rubik):
+#                 mouves, algo_num = algo.twenty_five(corner)
+#                 break
 
-    if (len(mouves) == 0):
-        mouve_F2L(soluce_mouves, ["U"], rubik, visualiser)
-        return False
-    mouve_F2L(soluce_mouves, mouves, rubik, visualiser)
-    return True
+#     if (len(mouves) == 0):
+#         mouve_F2L(soluce_mouves, ["U"], rubik, visualiser)
+#         return False
+#     mouve_F2L(soluce_mouves, mouves, rubik, visualiser)
+#     return True
 
 
 def replace_edge(soluce_mouves: list[str], tried, rubik: RubiksCube, visualiser: RubixVisualiser | None, is_not_found=False):

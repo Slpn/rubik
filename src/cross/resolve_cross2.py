@@ -1,3 +1,5 @@
+import copy
+import heapq
 import time
 from rubik_class import Opposite_mouves, RubiksCube
 from face_class import Edge, Face, check_edge_color, dir_nodes
@@ -8,7 +10,7 @@ import random
 from utils import CircularChainedList
 
 
-def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
+def resolve_cross(rubik: RubiksCube, closed_set: set, visualiser: RubixVisualiser):
     cross_idx = [(0, 1), (1, 2), (2, 1), (1, 0)]
     opposite_mouves = Opposite_mouves(rubik)
     cross_face = rubik.cube['Up']
@@ -16,6 +18,24 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
                    for other_face in rubik.cube if other_face != cross_face.dir]
 
     cross_mouves = []
+
+    conf = ' '.join(np.array(rubik.get_cube_array).flatten())
+
+    current_node = {
+        "cost": 0,
+        "mouves": [],
+        "id": conf,
+        "parent_id": None
+
+    }
+
+    open_set: heapq = []
+    closed_set = set()
+
+    def add_node_to_open_set():
+        conf = ' '.join(np.array(rubik.get_cube_array).flatten())
+        heapq.heappush(open_set, tuple(
+            (current_node['cost'] + 1, conf, current_node['id'])))
 
     def free_cross(face_dir: str):
         i, j = None, None
@@ -41,11 +61,20 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
                 # visualiser.opposite_mouves[mouves_dir[cross_face.dir][mouve]]()
                 # time.sleep(visualiser.SPEED)
             else:
-                cross_mouves.append(mouves_dir[cross_face.dir][mouve])
-                return
+                # cross_mouves.append(mouves_dir[cross_face.dir][mouve])
+                return mouves_dir[cross_face.dir][mouve]
 
     def mouve_face(face: Face, index: tuple, disable_opposite=False, random_mouve=True):
+        rubik_copy = copy.deepcopy(rubik.cube)
         if random_mouve:
+            for mouve in list(mouves_dir[face.dir].keys()):
+                rubik.mouves[mouves_dir[face.dir][mouve]]()
+                new_index = get_new_idx(index, mouve)
+                add_node_to_open_set()
+                rubik.cube = copy.deepcopy(rubik_copy)
+            return
+        if random_mouve:
+
             mouve = random.choice(list(mouves_dir[face.dir].keys()))
             rubik.mouves[mouves_dir[face.dir][mouve]]()
             new_index = get_new_idx(index, mouve)
@@ -85,6 +114,7 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
         replace_cross(color_order)
 
     def place_on_cross(face: Face, idx: tuple, edge_ok=False):
+        mouves = []
         to_mouve = get_face_to_mouve(face.dir, idx)
         if edge_ok:
             replace_cross()
@@ -161,6 +191,7 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
             return
 
         for mouve in mouves_dir[cross_face.dir]:
+
             rubik.mouves[mouves_dir[cross_face.dir][mouve]]()
             # visualiser.visualizer_mouves[mouves_dir[cross_face.dir][mouve]]()
             # time.sleep(visualiser.SPEED)
@@ -180,28 +211,26 @@ def resolve_cross(rubik: RubiksCube, visualiser: RubixVisualiser):
                 cross_mouves.append(mouves_dir[cross_face.dir][mouve])
                 return
 
-    while not rubik.check_cross():
+    well_placed = [
+        idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color and check_edge_color(cross_face, idx, rubik)]
+
+    while (len(well_placed) != 4):
+
         if (len(cross_mouves) > 20):
             return None
         random.shuffle(other_faces)
         for face in other_faces:
-            do_break = False
+
             not_placed = is_cross_sorted()
             if (not_placed):
                 to_mouve = get_face_to_mouve(cross_face.dir, not_placed)
                 mouve_face(rubik.cube[to_mouve], not_placed)
                 # not_placed = is_cross_sorted()
-            for idx in cross_idx:
-                if face.array[idx[0]][idx[1]] == cross_face.color:
-                    place_on_cross(
-                        face, idx, check_edge_color(face, idx, rubik))
-                    do_break = True
-                    break
-            if do_break:
-                break
-
-            if do_break:
-                break
+            else:
+                for idx in cross_idx:
+                    if face.array[idx[0]][idx[1]] == cross_face.color:
+                        place_on_cross(
+                            face, idx, check_edge_color(face, idx, rubik))
 
         cross_cubes = [
             idx for idx in cross_idx if cross_face.array[idx[0]][idx[1]] == cross_face.color]
