@@ -19,13 +19,21 @@ from OLL.OLL_algos import algos as OLL_algo
 
 def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: float, auto_visualise=True):
     time.sleep(2)
-    print(ord('y'))
+    print(ord('z'))
     visualiser.SPEED = speed
-    for mouve in mouves:
-        print(mouve)
+    i = 0
+    while i < len(mouves):
+        mouve = mouves[i]
         user_continue = " "
-        while (not auto_visualise and ord(user_continue) != 97):
+        while (not auto_visualise and ord(user_continue) != 97 and ord(user_continue) != 122):
             user_continue = input("Tapez y pour le prochain mouv: ")
+        if not auto_visualise:
+            if ord(user_continue) == 97 and i > 0:
+                i -= 1
+            if ord(user_continue) == 122 and i < len(mouves) - 1:
+                i += 1
+        else:
+            i += 1
         visualiser.visualizer_mouves[mouve]()
         time.sleep(visualiser.SPEED)
 

@@ -3,7 +3,7 @@ import time
 from tqdm import tqdm
 
 SCRIPT = "python src/main.py --generate 15"
-ITER = 200
+ITER = 100
 
 
 try:
@@ -25,8 +25,8 @@ try:
         execution_time = end_time - start_time
         if execution_time > max_duration:
             max_duration = execution_time
-        print('Spins:', len(mouves))
-        print('Time:', round(execution_time, 2), 'seconds')
+        # print('Spins:', len(mouves))
+        # print('Time:', round(execution_time, 2), 'seconds')
 
     print()
     print('Average number of spins:', int(total_mouves / ITER))
