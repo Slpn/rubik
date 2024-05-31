@@ -2,11 +2,7 @@ import copy
 from rubik_class import RubiksCube
 from PLL.PLL_algo import algos
 from rubik_utils import apply_mouves, get_new_idx, inverse_mouves_dir, make_algo_mouves
-from rubik_utils import inverse_mouves_dir, \
-    x_mouves_dir, x_prime_mouves_dir, \
-    y_mouves_dir, y_prime_mouve_dir, y2_mouve_dir, \
-    z_mouves_dir, z_prime_mouves_dir, x2_mouves_dir, \
-    append_mouve, append_y2_prime_mouve, append_y_mouve, append_y_prime_mouve
+from rubik_utils import append_mouve, append_y2_prime_mouve, append_y_mouve, append_y_prime_mouve
 
 
 def detect_PLL(rubik: RubiksCube):

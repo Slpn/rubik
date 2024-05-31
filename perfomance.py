@@ -2,8 +2,8 @@ import subprocess
 import time
 from tqdm import tqdm
 
-SCRIPT = "python src/main.py --generate 15"
-ITER = 100
+SCRIPT = "python src/main.py --generate 10"
+ITER = 50
 
 
 try:
@@ -35,3 +35,7 @@ try:
 except subprocess.CalledProcessError as e:
     print(process.stdout)
     print(f"Erreur lors de l'exécution : {e.stderr}")
+
+
+except KeyboardInterrupt:
+    print("Canceled")

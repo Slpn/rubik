@@ -2,6 +2,7 @@ import copy
 import curses
 import heapq
 import random
+import signal
 import sys
 import threading
 import time
@@ -10,32 +11,42 @@ from OLL.OLL import OLL
 from PLL.PLL import PLL
 from cross.resolve_cross import resolve_cross
 from rubik_class import RubiksCube
-from rubik_utils import apply_mouves, clear_mouves
+from rubik_utils import apply_mouves, clear_mouves, opposite_mouves
 from utils import get_options
 from vizualize import RubixVisualiser, launch_vizualiser
 import numpy as np
 from OLL.OLL_algos import algos as OLL_algo
 
+end = False
 
-def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: float, auto_visualise=True):
+
+def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: float, mixLen: int, auto_visualise=True):
+
+    user_continue: str = ''
     time.sleep(2)
-    print(ord('z'))
     visualiser.SPEED = speed
     i = 0
-    while i < len(mouves):
-        mouve = mouves[i]
+
+    while not end and i < len(mouves):
         user_continue = " "
-        while (not auto_visualise and ord(user_continue) != 97 and ord(user_continue) != 122):
-            user_continue = input("Tapez y pour le prochain mouv: ")
         if not auto_visualise:
-            if ord(user_continue) == 97 and i > 0:
+            while not end and (len(user_continue) != 1 or (ord(user_continue) != 97 and ord(user_continue) != 122)):
+                user_continue = input("\nTapez y pour le prochain mouv: ")
+
+        if not auto_visualise and ord(user_continue) == 97:
+            if i > 0:
                 i -= 1
-            if ord(user_continue) == 122 and i < len(mouves) - 1:
-                i += 1
+                mouve = opposite_mouves[mouves[i]]
+                visualiser.visualizer_mouves[mouve]()
+                time.sleep(visualiser.SPEED)
+            else:
+                print(
+                    'The current mouve is already the first mouve of the sequence.')
         else:
+            mouve = mouves[i]
+            visualiser.visualizer_mouves[mouve]()
+            time.sleep(visualiser.SPEED)
             i += 1
-        visualiser.visualizer_mouves[mouve]()
-        time.sleep(visualiser.SPEED)
 
 
 def mix_rubiks(mouves: str, rubik: RubiksCube, visualiser: RubixVisualiser | None = None):
@@ -175,8 +186,31 @@ def resolve_rubik(rubik: RubiksCube, visualiser: RubixVisualiser | None = None, 
     return rubik.soluce_mouves
 
 
+def run_visualise(visualiser: RubixVisualiser, mix: list, rubik: RubiksCube):
+    global end
+    while (not visualiser.ready):
+        time.sleep(0.3)
+
+    if not visualise_mix:
+        mouve_visualiser(
+            mix, visualiser,  0.0, len(mix), True)
+        thread_visualiser = threading.Thread(
+            target=mouve_visualiser, args=[rubik.soluce_mouves, visualiser,  0.04, auto_visualise])
+    else:
+        thread_visualiser = threading.Thread(
+            target=mouve_visualiser, args=[mix + rubik.soluce_mouves, visualiser,  0.04, len(mix), auto_visualise])
+
+    thread_visualiser.start()
+
+    launch_vizualiser(visualiser)
+    end = True
+    thread_visualiser.join()
+
+
 if __name__ == "__main__":
-    global mix
+
+    visualiser: RubixVisualiser | None = None
+
     try:
 
         rubik = RubiksCube()
@@ -196,23 +230,21 @@ if __name__ == "__main__":
         print(' '.join(rubik.soluce_mouves))
 
         if visualise:
+            print("Reaching Visualiser...")
             visualiser = RubixVisualiser()
-            mouve_visualiser(
-                mix, visualiser,  0.0 if not visualise_mix else 0.04, auto_visualise)
-
-            thread_visualiser = threading.Thread(
-                target=mouve_visualiser, args=[rubik.soluce_mouves, visualiser, 0.04, auto_visualise])
-            thread_visualiser.start()
-            launch_vizualiser()
+            run_visualise(visualiser, mix, rubik)
 
         sys.exit(0)
 
     except Exception as e:
         print("Error:", e)
-    #    sys.exit(-2)
-        raise (e)
+        if (visualiser):
+            visualiser.close()
+        sys.exit(-2)
+     #   raise (e)
 
     except KeyboardInterrupt:
-        visualiser.close()
+        if (visualiser):
+            visualiser.close()
         print("Canceled")
 sys.exit()

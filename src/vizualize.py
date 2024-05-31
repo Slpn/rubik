@@ -1,10 +1,15 @@
 from enum import Enum
+import signal
 import sys
 import time
 from typing import Union
 from vispy import app, scene, gloo, visuals
 import numpy as np
 from vispy.color import ColorArray
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PyQt5.QtGui import QFont
+from vispy.scene.visuals import Text
+from vispy.visuals.transforms import TransformSystem, STTransform
 
 
 CUBE_SIZE = 1
@@ -51,25 +56,22 @@ face_colors = [
 class RubixVisualiser(app.Canvas):
 
     def __init__(self):
+        self.ready = False
         app.Canvas.__init__(self, keys='interactive',
                             show=False)
 
-        self.SPEED = 0.06
-
-        self.view = scene.SceneCanvas(keys='interactive', show=True)
+        self.view = scene.SceneCanvas(
+            keys='interactive', show=True)
         self.view.size = (800, 600)
-        self.view.create_native()
-
         self.view_widget = self.view.central_widget.add_view()
         self.view_widget.bgcolor = (1, 1, 1, 1)
+        self.view.create_native()
 
         self.cam = scene.cameras.TurntableCamera(parent=self.view_widget.scene,
                                                  up='y', azimuth=-45, elevation=30, distance=10, center=(0, 0, 0), roll=360)
 
-        self.cam.flip = (False, True, False)
+      #  self.cam.flip = (False, True, False)
         self.view_widget.camera = self.cam
-
-        self.cam.set_range()
 
         self.node_cube = scene.node.Node(parent=self.view_widget.scene, name='rubix',
                                          transforms=None)
@@ -77,6 +79,8 @@ class RubixVisualiser(app.Canvas):
                                          transforms=None)
 
         self.all_cubes_nodes: list[scene.node.Node] = self.create_cube()
+
+        self.view.title = "Rubik's Cube Visualiser"
 
         self.visualizer_mouves = {
             "U": self.U,
@@ -165,13 +169,14 @@ class RubixVisualiser(app.Canvas):
                 self.R(),
             ),
         }
+        self.ready = True
 
         # self.worker_thread = WorkerThread(self)
         # self.worker_thread.start()
 
     def close(self):
         app.quit()
-        raise KeyboardInterrupt('Visualiser have quit')
+        print('Visualiser have quit')
 
     def on_timer(self, event):
         self.update()
@@ -325,18 +330,17 @@ class RubixVisualiser(app.Canvas):
                 # [black, black, black, black, black, black, red, red, black, black, black, black]
                 # the position index of up face is 6 and 7
                 if (i == 1):
-                    face_colors[faceIndex['UP'][0]                                :faceIndex['UP'][1]] = colors['WHITE']
+                    face_colors[faceIndex['UP'][0]:faceIndex['UP'][1]] = colors['WHITE']
                 if (i == 3):
-                    face_colors[faceIndex['DOWN'][0]                                :faceIndex['DOWN'][1]] = colors['YELLOW']
+                    face_colors[faceIndex['DOWN'][0]:faceIndex['DOWN'][1]] = colors['YELLOW']
                 if (idx >= 6):
-                    face_colors[faceIndex['BOTTOM'][0]                                :faceIndex['BOTTOM'][1]] = colors['BLUE']
+                    face_colors[faceIndex['BOTTOM'][0]:faceIndex['BOTTOM'][1]] = colors['BLUE']
                 if (idx % 3 == 0):
-                    face_colors[faceIndex['RIGHT'][0]                                :faceIndex['RIGHT'][1]] = colors['RED']
+                    face_colors[faceIndex['RIGHT'][0]:faceIndex['RIGHT'][1]] = colors['RED']
                 if (idx < 3):
-                    face_colors[faceIndex['FRONT'][0]                                :faceIndex['FRONT'][1]] = colors['GREEN']
+                    face_colors[faceIndex['FRONT'][0]:faceIndex['FRONT'][1]] = colors['GREEN']
                 if ((idx - 2) % 3 == 0):
-                    face_colors[faceIndex['LEFT'][0]
-                        :faceIndex['LEFT'][1]] = colors["ORANGE"]
+                    face_colors[faceIndex['LEFT'][0]:faceIndex['LEFT'][1]] = colors["ORANGE"]
 
                 # Crete the node at the ggod position
                 transform = scene.STTransform(translate=pos)
@@ -352,5 +356,13 @@ class RubixVisualiser(app.Canvas):
         return cubes
 
 
-def launch_vizualiser():
+def handle_interrupt(signal, frame):
+    app.quit()
+
+
+def launch_vizualiser(visualiser: RubixVisualiser):
+    # Connecter le gestionnaire de signaux au signal KeyboardInterrupt
+   # signal.signal(signal.SIGINT, handle_interrupt)
+    signal.signal(signal.SIGINT, handle_interrupt)
     app.run()
+    visualiser.close()
