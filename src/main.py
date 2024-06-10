@@ -31,7 +31,7 @@ def mouve_visualiser(mouves: list[str], visualiser: RubixVisualiser, speed: floa
         user_continue = " "
         if not auto_visualise:
             while not end and (len(user_continue) != 1 or (ord(user_continue) != 97 and ord(user_continue) != 122)):
-                user_continue = input("\nTapez y pour le prochain mouv: ")
+                user_continue = input("\nWrite z for the previous move or a for the next: ")
 
         if not auto_visualise and ord(user_continue) == 97:
             if i > 0:
@@ -230,7 +230,7 @@ if __name__ == "__main__":
         print(' '.join(rubik.soluce_mouves))
 
         if visualise:
-            print("Reaching Visualiser...")
+            # print("Reaching Visualiser...")
             visualiser = RubixVisualiser()
             run_visualise(visualiser, mix, rubik)
 

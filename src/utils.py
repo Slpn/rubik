@@ -160,8 +160,8 @@ def get_options(argv: list[str]):
         visualise_mix = curses.wrapper(
             lambda stdscr: choice_option(stdscr, ["Yes", "False"], "Visualise mix ?"))
         visualise_mix = visualise_mix == "Yes"
-        auto_visualise = curses.wrapper(
-            lambda stdscr: choice_option(stdscr, ["Yes", "False"], "Run auto mouves ? "))
-        auto_visualise = auto_visualise == "Yes"
+    # auto_visualise = curses.wrapper(
+    #     lambda stdscr: choice_option(stdscr, ["Yes", "False"], "Run auto mouves ? "))
+        auto_visualise = True
 
     return generate, generated_lenght, visualise, visualise_mix, auto_visualise, count

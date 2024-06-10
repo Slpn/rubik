@@ -176,7 +176,7 @@ class RubixVisualiser(app.Canvas):
 
     def close(self):
         app.quit()
-        print('Visualiser have quit')
+        # print('Visualiser have quit')
 
     def on_timer(self, event):
         self.update()
