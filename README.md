@@ -52,5 +52,5 @@ python3 src/main.py --generate 10 --visualise
 Evaluate the solver's performance:
 
 ```bash
-python3 perfomance.py
+python3 performance.py
 ```
